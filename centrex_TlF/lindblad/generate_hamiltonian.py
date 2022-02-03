@@ -115,19 +115,19 @@ def generate_symbolic_hamiltonian(QN, H_int, couplings, Ωs, δs, pols):
                 P = pols[idc]
                 if P:
                     P = P[idf]
-                    val = (P*Ω/main_coupling)
+                    val = (P*Ω/main_coupling)/2
                     for i,j in zip(*np.nonzero(field['field'])):
                         if i < j:
                             hamiltonian[i,j] += val*field['field'][i,j]*symb_exp(1j*ω*t)
                             hamiltonian[j,i] += val*field['field'][j,i]*symb_exp(-1j*ω*t)
                 else:
-                    val = (Ω/main_coupling)
+                    val = (Ω/main_coupling)/2
                     for i,j in zip(*np.nonzero(field['field'])):
                         if i < j:
                             hamiltonian[i,j] += val*field['field'][i,j]*symb_exp(1j*ω*t)
                             hamiltonian[j,i] += val*field['field'][j,i]*symb_exp(-1j*ω*t)
             else:
-                val = (Ω/main_coupling)
+                val = (Ω/main_coupling)/2
                 for i,j in zip(*np.nonzero(field['field'])):
                     if i < j:
                         hamiltonian[i,j] += val*field['field'][i,j]*symb_exp(1j*ω*t)
