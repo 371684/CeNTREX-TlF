@@ -79,12 +79,12 @@ def generate_OBE_system(system_parameters, transitions,
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
         logger.info("generate_OBE_system: 1/6 -> Generating the reduced Hamiltonian")
-    ground_states, excited_states, QN, H_int, V_ref_int = \
+    X_states, B_states, QN, H_int, V_ref_int = \
         generate_total_reduced_hamiltonian(
             ground_states_approx  = \
-                    generate_coupled_states_ground_X(system_parameters.ground),
+                    generate_coupled_states_ground_X(system_parameters.X),
             excited_states_approx = \
-                    generate_coupled_states_excited_B(system_parameters.excited)
+                    generate_coupled_states_excited_B(system_parameters.B)
         )
     if verbose:
         logger.info("generate_OBE_system: 2/6 -> Generating the couplings corresponding to the transitions")
@@ -129,7 +129,7 @@ def generate_OBE_system(system_parameters, transitions,
     if verbose:
         logger.info("generate_OBE_system: 4/6 -> Generating the collapse matrices")
     C_array = collapse_matrices(
-                QN, ground_states, excited_states, gamma = system_parameters.Γ,
+                QN, X_states, B_states, gamma = system_parameters.Γ,
                 qn_compact = qn_compact
             )
 
@@ -139,7 +139,7 @@ def generate_OBE_system(system_parameters, transitions,
         if qn_compact is not None:
             indices, H_symbolic = add_levels_symbolic_hamiltonian(
                                     H_symbolic, decay_channels, QN_compact, 
-                                    excited_states
+                                    B_states
                                 )
             QN_compact = add_states_QN(decay_channels, QN_compact, indices)
             C_array = add_decays_C_arrays(decay_channels, indices, QN_compact,
@@ -147,7 +147,7 @@ def generate_OBE_system(system_parameters, transitions,
         else:
             indices, H_symbolic = add_levels_symbolic_hamiltonian(
                                     H_symbolic, decay_channels, QN, 
-                                    excited_states
+                                    B_states
                                 )
             QN = add_states_QN(decay_channels, QN_compact, indices)
             C_array = add_decays_C_arrays(decay_channels, indices, QN,
@@ -167,7 +167,7 @@ def generate_OBE_system(system_parameters, transitions,
     else:
         QN_original = None
     obe_system = OBESystem(
-                    QN = QN, ground = ground_states, excited = excited_states,
+                    QN = QN, ground = X_states, excited = B_states,
                     couplings = couplings, H_symbolic = H_symbolic, 
                     H_int = H_int, V_ref_int = V_ref_int, C_array = C_array, 
                     system = system, 

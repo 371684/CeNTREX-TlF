@@ -169,8 +169,10 @@ class QuantumSelector:
 class SystemParameters:
     nprocs: int
     Γ: float
-    ground: Union[list, np.ndarray, QuantumSelector]
-    excited: Union[list, np.ndarray, QuantumSelector]
+    X: Union[list, np.ndarray, QuantumSelector]
+    B: Union[list, np.ndarray, QuantumSelector]
+    # ground: Union[list, np.ndarray, QuantumSelector]
+    # excited: Union[list, np.ndarray, QuantumSelector]
 
 def get_indices_quantumnumbers_base(qn_selector: QuantumSelector, 
                                     QN: Union[list, np.ndarray],

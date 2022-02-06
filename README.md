@@ -195,23 +195,23 @@ from sympy import symbols, Symbol
 syspars = centrex.states.SystemParameters(
     nprocs  = 6,
     Γ       = 2*np.pi*1.56e6,
-    ground  = [centrex.states.QuantumSelector(J=1, electronic = 'X'),
+    X  = [centrex.states.QuantumSelector(J=1, electronic = 'X'),
                centrex.states.QuantumSelector(J=3, electronic = 'X')],
-    excited = centrex.states.QuantumSelector(J=1, F=1, F1=3/2, P=+1, electronic = 'B')
+    B = centrex.states.QuantumSelector(J=1, F=1, F1=3/2, P=+1, electronic = 'B')
 )
 ```
 `SystemParameters` defines the general system parameters used in the simulations  
 * nprocs -> the number of processes to use in generating and solving the system; generally set equal to the number of processor cores
 * Γ -> decay rate in 2π⋅Hz
-* ground -> involved ground states
-* excited -> involved excited states
+* X -> involved X states
+* B -> involved B states
   
 
 ```Python
 transitions = [
     centrex.couplings.TransitionSelector(
-        ground               = 1*centrex.states.generate_coupled_states_ground_X(syspars.ground[0]),
-        excited              = 1*centrex.states.generate_coupled_states_excited_B(syspars.excited),
+        ground               = 1*centrex.states.generate_coupled_states_ground_X(syspars.B[0]),
+        excited              = 1*centrex.states.generate_coupled_states_excited_B(syspars.X),
         polarizations        =        [[1,0,0], [0,0,1]],
         polarization_symbols = symbols("Plx     Plz"),
         Ω                    = Symbol('Ωl', complex = True),

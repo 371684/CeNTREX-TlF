@@ -75,6 +75,8 @@ def symbolic_hamiltonian_to_rotating_frame(hamiltonian, QN, H_int, couplings, δ
     transformed = T.adjoint()@hamiltonian@T - 1j*T.adjoint()@diff(T,t)
     transformed = simplify(transformed)
 
+    transformed = Matrix(transformed)
+
     for idc, (δ, coupling) in enumerate(zip(δs, couplings)):
         # generate transition frequency symbol
         ω = Symbol(f"ω{idc}", real = True)
@@ -83,13 +85,26 @@ def symbolic_hamiltonian_to_rotating_frame(hamiltonian, QN, H_int, couplings, δ
         ide = QN.index(coupling['excited main'])
         # transform to δ instead of ω and E
         transformed = transformed.subs(ω, energies[ide]-energies[idg] + δ)
-    
+
     # substitute level energies for symbolic values
     transformed = transformed.subs([(E,val) for E,val 
                                             in zip(energies, np.diag(H_int))])
-    
-    transformed -= eye(n_states)*transformed[ide,ide]
 
+    # set energie difference between excited and ground states to zero
+    # should be done automatically when solving for the unitary matrix, not sure
+    # why this is not happening currently
+    for coupling in couplings:
+        idg = QN.index(coupling['ground main'])
+        ide = QN.index(coupling['excited main'])
+        indices_ground = [QN.index(s) for s in coupling['ground states']]
+        indices_excited = [QN.index(s) for s in coupling['excited states']]
+        g = transformed[idg,idg].subs([(s, 0) for s in transformed[idg, idg].free_symbols])
+        e = transformed[ide,ide].subs([(s, 0) for s in transformed[ide, ide].free_symbols])
+        for idg in indices_ground:
+            transformed[idg, idg] -= g
+        for ide in indices_excited:
+            transformed[ide,ide] -= e
+    
     return transformed
 
 

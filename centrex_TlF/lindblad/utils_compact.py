@@ -30,8 +30,9 @@ def compact_symbolic_hamiltonian_indices(hamiltonian, indices_compact):
     arr = hamiltonian.copy()
     diagonal = arr.diagonal()
     diagonal = [diagonal[idd] for idd in indices_compact]
+    free_symbols = np.unique([val.free_symbols for val in diagonal])
     check_free_symbols = np.sum([len(val.free_symbols) for val in diagonal])
-    assert check_free_symbols == 0, 'diagonal elements for states to compact have symbols, cannot compact'
+    assert check_free_symbols == 0, f'diagonal elements for states to compact have symbols, cannot compact: {free_symbols}'
 
     # delete the rows and columns to compact, except a single one that's needed
     # to put the decays into
