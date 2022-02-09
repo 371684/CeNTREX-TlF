@@ -95,7 +95,7 @@ def calculate_uncoupled_hamiltonian_X(QN, nprocs = 1):
     }
 
 def generate_coupled_hamiltonian_B(QN, nprocs = 1):
-    """Calculate the coupled B state hamiltonian for the supplies set of 
+    """Calculate the coupled B state hamiltonian for the supplied set of 
     basis states.
     Retrieved from a pre-calculated sqlite3 database
 

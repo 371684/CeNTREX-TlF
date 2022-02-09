@@ -74,6 +74,12 @@ def generate_OBE_system(system_parameters, transitions,
                     ground, exxcited, QN, H_int, V_ref_int, couplings, H_symbolic,
                     C_array, system, code_lines
     """
+    # values above and below of excited J states to include in hamiltonian
+    # to take into account excited state mixing
+    # default input None does min(J)-1 and max(J)+1
+    Jmin = None
+    Jmax = None
+    rtol = None
     if verbose:
         logging.basicConfig(level=logging.INFO)
         logger = logging.getLogger(__name__)
@@ -84,7 +90,10 @@ def generate_OBE_system(system_parameters, transitions,
             ground_states_approx  = \
                     generate_coupled_states_ground_X(system_parameters.X),
             excited_states_approx = \
-                    generate_coupled_states_excited_B(system_parameters.B)
+                    generate_coupled_states_excited_B(
+                        system_parameters.B, Jmin = Jmin, Jmax = Jmax,
+                        rtol = rtol
+                    )
         )
     if verbose:
         logger.info("generate_OBE_system: 2/6 -> Generating the couplings corresponding to the transitions")

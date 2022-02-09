@@ -76,7 +76,6 @@ def generate_reduced_B_hamiltonian(excited_states_approx,
                                     rtol = None,
                                     Jmin = 1,
                                     Jmax = 3):
-
     # need to generate other states because excited states are mixed
     Ps = [-1,1]
     I_F = 1/2
@@ -122,9 +121,10 @@ def compose_reduced_hamiltonian(H_X_red, H_B_red, element_limit = 0.1):
 def generate_total_reduced_hamiltonian(ground_states_approx, 
                                         excited_states_approx,
                                         Jmin = None,
-                                        Jmax = None):
+                                        Jmax = None,
+                                        rtol = None):
     ground_states, H_X_red = \
-        generate_reduced_X_hamiltonian(ground_states_approx)
+        generate_reduced_X_hamiltonian(ground_states_approx, rtol = rtol)
 
     # Js to include for rotational mixing in B state
     Jexc = np.unique([s.J for s in excited_states_approx])
@@ -135,7 +135,11 @@ def generate_total_reduced_hamiltonian(ground_states_approx,
         Jmax = np.max(Jexc) + 1
 
     excited_states, H_B_red = \
-        generate_reduced_B_hamiltonian(excited_states_approx, Jmin, Jmax)
+        generate_reduced_B_hamiltonian(excited_states_approx, 
+                                        Jmin = Jmin, 
+                                        Jmax = Jmax, 
+                                        rtol = rtol
+                                    )
     
     H_int, V_ref_int = compose_reduced_hamiltonian(H_X_red, H_B_red)
 
