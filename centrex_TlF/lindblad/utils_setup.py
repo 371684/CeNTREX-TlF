@@ -90,10 +90,10 @@ def generate_OBE_system(system_parameters, transitions,
             ground_states_approx  = \
                     generate_coupled_states_ground_X(system_parameters.X),
             excited_states_approx = \
-                    generate_coupled_states_excited_B(
-                        system_parameters.B, Jmin = Jmin, Jmax = Jmax,
-                        rtol = rtol
-                    )
+                    generate_coupled_states_excited_B(system_parameters.B),
+            Jmin = Jmin, 
+            Jmax = Jmax,
+            rtol = rtol
         )
     if verbose:
         logger.info("generate_OBE_system: 2/6 -> Generating the couplings corresponding to the transitions")
