@@ -168,7 +168,7 @@ def generate_transitions(fname, QN_X, QN_B, E, B, nprocs):
     QN, H_tot = centrex.transitions.calculate_energies(QN_X, QN_B, E, B, 
                                 nprocs = nprocs)
 
-    QN = [s.remove_small_components(1e-2) for s in QN]
+    QN = [s.remove_small_components(1e-3) for s in QN]
 
     with open(fname, 'wb') as f:
         pickle.dump({'QN': QN, 'H': H_tot}, f)

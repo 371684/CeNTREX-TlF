@@ -11,8 +11,11 @@ __all__ = [
 
 class CoupledBasisState:
     # constructor
-    def __init__(self, F, mF, F1, J, I1, I2, Omega = None, P = None, electronic_state = None, energy = None, Ω = None,
-        ν = None):
+    def __init__(
+                self, F, mF, F1, J, I1, I2, Omega = None, P = None, 
+                electronic_state = None, energy = None, Ω = None,
+                v = None
+            ):
         self.F, self.mF  = F, mF
         self.F1 = F1
         self.J = J
@@ -27,17 +30,17 @@ class CoupledBasisState:
         self.energy = energy
         self.isCoupled = True
         self.isUncoupled = False
-        self.ν = ν
-    
+        self.v = v
+
     # equality testing
     def __eq__(self, other):
         # return self.__hash__() == other.__hash__()
         return self.F==other.F and self.mF==other.mF \
-                     and self.I1==other.I1 and self.I2==other.I2 \
-                     and self.F1==other.F1 and self.J==other.J \
-                     and self.Omega == other.Omega and self.P == other.P \
-                     and self.electronic_state == other.electronic_state \
-                     and self.ν == other.ν
+                    and self.I1==other.I1 and self.I2==other.I2 \
+                    and self.F1==other.F1 and self.J==other.J \
+                    and self.Omega == other.Omega and self.P == other.P \
+                    and self.electronic_state == other.electronic_state \
+                    and self.v == other.v
 
     # inner product
     def __matmul__(self, other):
@@ -47,7 +50,7 @@ class CoupledBasisState:
             else:
                 return 0
         else:
-           return State([(1,other)])@self.transform_to_uncoupled()
+            return State([(1,other)])@self.transform_to_uncoupled()
 
     # superposition: addition
     def __add__(self, other):
@@ -95,7 +98,7 @@ class CoupledBasisState:
         else:
             P = None
         Omega = self.Omega
-        ν = self.ν
+        v = self.v
 
         string = f"J = {J}, F₁ = {F1}, F = {F}, mF = {mF}, I₁ = {I1}, I₂ = {I2}"
     
@@ -105,8 +108,8 @@ class CoupledBasisState:
             string = f"{string}, P = {P}"
         if Omega != None:
             string = f"{string}, Ω = {Omega}"
-        if ν != None:
-            string = f"{string}, ν = {ν}"
+        if v != None:
+            string = f"{string}, v = {v}"
         return "|"+string+">"
 
     def print_quantum_numbers(self, printing = False):
