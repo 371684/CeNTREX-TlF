@@ -1,10 +1,11 @@
 import numpy as np
 
 __all__ = [
-    "generate_random_coords_circle_2D", 
+    "generate_random_coords_circle_2D",
     "generate_random_longitudinal_velocities",
-    "generate_random_transverse_velocities"
+    "generate_random_transverse_velocities",
 ]
+
 
 def generate_random_coords_circle_2D(n, σ):
     """generate random xy coordinates in a circle
@@ -16,11 +17,12 @@ def generate_random_coords_circle_2D(n, σ):
     Returns:
         np.ndarray: 2D array with xy coordinates
     """
-    generate_random_r = lambda n,σ: np.random.normal(0,σ,n)
-    xy = np.empty([2,n])
-    xy[0,:] = generate_random_r(n,σ)
-    xy[1,:] = generate_random_r(n,σ)
+    generate_random_r = lambda n, σ: np.random.normal(0, σ, n)
+    xy = np.empty([2, n])
+    xy[0, :] = generate_random_r(n, σ)
+    xy[1, :] = generate_random_r(n, σ)
     return xy
+
 
 def generate_random_longitudinal_velocities(n, vμ, vσ):
     """generate random longitudinal velocities
@@ -35,6 +37,7 @@ def generate_random_longitudinal_velocities(n, vμ, vσ):
     """
     return np.random.normal(vμ, vσ, n)
 
+
 def generate_random_transverse_velocities(n, vσ):
     """generate random transverse velocities
 
@@ -46,8 +49,6 @@ def generate_random_transverse_velocities(n, vσ):
         np.ndarray: 2D array with transverse velocities
     """
     velocities = np.random.multivariate_normal(
-                                [0,0],
-                                np.array([[vσ**2,0],[0,vσ**2]]),
-                                n
-                            ).T
+        [0, 0], np.array([[vσ ** 2, 0], [0, vσ ** 2]]), n
+    ).T
     return velocities

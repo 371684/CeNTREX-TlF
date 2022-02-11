@@ -8,7 +8,7 @@ from . import generate_system_of_equations
 from .generate_system_of_equations import *
 
 from . import generate_julia_code
-from .generate_julia_code import * 
+from .generate_julia_code import *
 
 from . import utils_julia
 from .utils_julia import *

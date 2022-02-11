@@ -1,13 +1,10 @@
 import numpy as np
-from centrex_TlF.couplings.matrix_elements import (
-    generate_ED_ME_mixed_state
-)
+from centrex_TlF.couplings.matrix_elements import generate_ED_ME_mixed_state
 
-__all__ = [
-    'calculate_BR'
-]
+__all__ = ["calculate_BR"]
 
-def calculate_BR(excited_state, ground_states, tol = 1e-5):
+
+def calculate_BR(excited_state, ground_states, tol=1e-5):
     """
     Function that calculates branching ratios from the given excited state to 
     the given ground states
@@ -22,18 +19,18 @@ def calculate_BR(excited_state, ground_states, tol = 1e-5):
     BRs = list of branching ratios to each of the ground states
     """
 
-    # Initialize container for matrix elements between excited state and ground 
+    # Initialize container for matrix elements between excited state and ground
     # states
-    MEs = np.zeros(len(ground_states), dtype = complex)
+    MEs = np.zeros(len(ground_states), dtype=complex)
 
-    #loop over ground states
+    # loop over ground states
     for i, ground_state in enumerate(ground_states):
         MEs[i] = generate_ED_ME_mixed_state(
-            ground_state.remove_small_components(tol = tol),
-            excited_state.remove_small_components(tol = tol)
-            )
-    
-    #Calculate branching ratios
-    BRs = np.abs(MEs)**2/(np.sum(np.abs(MEs)**2))
+            ground_state.remove_small_components(tol=tol),
+            excited_state.remove_small_components(tol=tol),
+        )
+
+    # Calculate branching ratios
+    BRs = np.abs(MEs) ** 2 / (np.sum(np.abs(MEs) ** 2))
 
     return BRs

@@ -2,8 +2,9 @@ import json
 import numpy as np
 from pathlib import Path
 
+
 def retrieve_ED_ME_coupled_sqlite_single_rme(a, b, pol_vec, con):
-    table = 'ED_ME_coupled_rme'
+    table = "ED_ME_coupled_rme"
     with con:
         cur = con.cursor()
         string = f"J₁ = {a.J} AND F1₁ = {a.F1} AND F₁ = {int(a.F)} AND mF₁ = {int(a.mF)} AND I1₁ = {a.I1} AND I2₁ = {a.I2} AND Ω₁ = {int(a.Omega)} AND state₁ = '{a.electronic_state}' "
@@ -12,13 +13,14 @@ def retrieve_ED_ME_coupled_sqlite_single_rme(a, b, pol_vec, con):
         values = cur.fetchall()
         if values:
             values = values[0]
-            values = values[0] + 1j*values[1]
+            values = values[0] + 1j * values[1]
         else:
             values = complex(0)
     return values
 
+
 def retrieve_ED_ME_coupled_sqlite_single(a, b, pol_vec, con):
-    table = 'ED_ME_coupled'
+    table = "ED_ME_coupled"
     with con:
         cur = con.cursor()
         string = f"J₁ = {a.J} AND F1₁ = {a.F1} AND F₁ = {int(a.F)} AND mF₁ = {int(a.mF)} AND I1₁ = {a.I1} AND I2₁ = {a.I2} AND Ω₁ = {int(a.Omega)} AND state₁ = '{a.electronic_state}' "
@@ -28,10 +30,11 @@ def retrieve_ED_ME_coupled_sqlite_single(a, b, pol_vec, con):
         values = cur.fetchall()
         if values:
             values = values[0]
-            values = values[0] + 1j*values[1]
+            values = values[0] + 1j * values[1]
         else:
             values = complex(0)
     return values
+
 
 def check_states_in_ED_ME_coupled(Jg, Je, pol_vec):
     # load json
@@ -40,14 +43,14 @@ def check_states_in_ED_ME_coupled(Jg, Je, pol_vec):
     with open(js) as json_file:
         f = json.load(json_file)
 
-    # check if ground state J is pre-cached   
-    if not np.all(J in f['matrix_elements']['X'] for J in Jg):
+    # check if ground state J is pre-cached
+    if not np.all(J in f["matrix_elements"]["X"] for J in Jg):
         return False
     # check if excited state J is pre-cached
-    if not np.all(J in f['matrix_elements']['B'] for J in Je):
+    if not np.all(J in f["matrix_elements"]["B"] for J in Je):
         return False
     # check if the pol-vec is pre-cached
-    if not list(pol_vec) in f['matrix_elements']['pol_vec']:
+    if not list(pol_vec) in f["matrix_elements"]["pol_vec"]:
         return False
     else:
         return True
