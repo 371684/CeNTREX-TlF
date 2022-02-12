@@ -2,12 +2,15 @@ import json
 import scipy
 import pickle
 import numpy as np
-from tqdm import tqdm
 from pathlib import Path
 from sympy import Rational
-from centrex_TlF.states.states import CoupledBasisState, State
+from centrex_TlF.states.states import CoupledBasisState
+from centrex_TlF.states.generate_states import (
+    generate_coupled_states_excited_B
+)
 from centrex_TlF.states.utils import (
     BasisStates_from_State,
+    QuantumSelector,
     find_state_idx_from_state,
     find_states_idxs_from_states,
     find_closest_vector_idx
@@ -20,12 +23,15 @@ from centrex_TlF.hamiltonian import (
     generate_diagonalized_hamiltonian, 
     matrix_to_states
 )
+from centrex_TlF.transitions.utils import (
+    construct_ground_states_allowed
+)
 from functools import lru_cache
 
 __all__ = [
     'calculate_energies', 'calculate_transition_frequency', 
     'generate_transition_frequency', 'generate_transition_frequencies',
-    'find_transition', 'identify_transition'
+    'find_transition', 'identify_transition', 'LaserTransition'
 ]
 
 def calculate_energies(ground_states, excited_states, E = np.array([0,0,0]), 
@@ -210,35 +216,52 @@ def identify_transition(state1, state2):
     string = f"{transition}({Jg}) F1'={Rational(state2.F1)}, F'={Rational(state2.F)}"
     return string
 
-# class Transition:    
-#     transitions_nom = {0: 'Q', +1: 'R', -1: 'P', +2: 'S', -2: 'O', +3: 'T'}
-#     transitions_ΔJ = {'R': +1, 'P': -1, 'Q': 0, 'S': +2, 'O': -2, 'T': +3}
+class LaserTransition:    
+    transitions_nom = {0: 'Q', +1: 'R', -1: 'P', +2: 'S', -2: 'O', +3: 'T'}
+    transitions_ΔJ = {'R': +1, 'P': -1, 'Q': 0, 'S': +2, 'O': -2, 'T': +3}
     
-#     def __init__(self, transition, F1, F, eg = 'X', ee = 'B'):
-#         Je,Jg = transition
-#         self.transition = Je
-#         self.Jg = int(Jg)
-#         self.Je = self.Jg+self.transitions_ΔJ[Je]
-#         self.F1 = F1
-#         self.F = F
+    def __init__(self, transition, F1, F, eg = 'X', ee = 'B', ΔmF = None):
+        transition,Jg = transition
+        Jg = int(Jg)
+        self.transition = transition
+        self.Jg = Jg
+        self.Je = self.Jg+self.transitions_ΔJ[transition]
+        self.F1 = F1
+        self.F = F
+        self.ΔmF = ΔmF
 
 
-#         self.ground_state = 1*CoupledBasisState(
-#                                 J=self.Jg, F1 = self.Jg+1/2, F = self.Jg, mF = 0, 
-#                                 I1 = 1/2, I2 = 1/2, P = (-1)**self.Jg, Omega = 0, 
-#                                 electronic_state = eg
-#                                 )
-#         self.excited_state = 1*CoupledBasisState(
-#                                 J=self.Je, F1 = F1, F = F, mF = 0, I1 = 1/2,
-#                                 I2 = 1/2, P = (-1)**(self.Jg+1), Omega = 1, 
-#                                 electronic_state = ee
-#                                 )
-#         self.frequency = generate_transition_frequency(
-#                             self.ground_state, self.excited_state
-#                         )
+        self.ground_main = 1*CoupledBasisState(
+                                J=self.Jg, F1 = self.Jg+1/2, F = self.Jg, mF = 0, 
+                                I1 = 1/2, I2 = 1/2, P = (-1)**self.Jg, Omega = 0, 
+                                electronic_state = eg
+                                )
+        self.excited_main = 1*CoupledBasisState(
+                                J=self.Je, F1 = F1, F = F, mF = 0, I1 = 1/2,
+                                I2 = 1/2, P = (-1)**(self.Jg+1), Omega = 1, 
+                                electronic_state = ee
+                                )
+        self.ground_selector = QuantumSelector(J=self.Jg, electronic = eg,
+                                                P = (-1)**self.Jg)
+        self.excited_selector = QuantumSelector(
+                                    J=self.Je, F1 = self.F1, F = self.F,
+                                    electronic = ee, P = (-1)**(self.Jg+1)
+                                )
+        self.ground_states = construct_ground_states_allowed(
+                                self.Jg, self.Je, F1, F, ΔmF = ΔmF
+                            )
+        self.excited_states = generate_coupled_states_excited_B(
+                                self.excited_selector
+                            )
 
-#     def __repr__(self):
-#         string = \
-#             f"{self.transition}({self.Jg}) F1'={Rational(self.F1)}, F'={Rational(self.F)}"
-#         # string += f' -> {self.frequency/(2*np.pi*1e9):.2f} GHz'
-#         return f"Transition({string})"
+        self.n_ground = len(self.ground_states)
+        self.n_excited = len(self.excited_states)
+        self.frequency = generate_transition_frequency(
+                            self.ground_main, self.excited_main
+                        )
+
+    def __repr__(self):
+        string = \
+            f"{self.transition}({self.Jg}) F1'={Rational(self.F1)}, F'={Rational(self.F)}"
+        # string += f' -> {self.frequency/(2*np.pi*1e9):.2f} GHz'
+        return f"Transition({string})"
