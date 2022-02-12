@@ -1,8 +1,8 @@
-#Constants in MHz
+# Constants in MHz
 
 B_rot_B = 6687.879e6
 D_rot_B = 0.010869e6
-H_const_B  = -8.1e-2
+H_const_B = -8.1e-2
 h1_Tl = 28789e6
 h1_F = 861e6
 q = 2.423e6

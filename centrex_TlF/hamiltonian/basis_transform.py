@@ -3,13 +3,14 @@ from tqdm import tqdm
 import multiprocessing
 from pathlib import Path
 from centrex_TlF.hamiltonian.utils_multiprocessing import multi_transformation_matrix
-from centrex_TlF.hamiltonian.utils_sqlite import retrieve_S_transform_uncoupled_to_coupled_sqlite
+from centrex_TlF.hamiltonian.utils_sqlite import (
+    retrieve_S_transform_uncoupled_to_coupled_sqlite,
+)
 
-__all__ = [
-    'generate_transform_matrix', 'calculate_transform_matrix'
-]
+__all__ = ["generate_transform_matrix", "calculate_transform_matrix"]
 
-def generate_transform_matrix(basis1, basis2, progress = False):
+
+def generate_transform_matrix(basis1, basis2, progress=False):
     """
     Function that generates a transform matrix that takes Hamiltonian expressed
     in basis1 to basis2: H_2 = S.conj().T @ H_1 @ S
@@ -27,12 +28,13 @@ def generate_transform_matrix(basis1, basis2, progress = False):
     path = Path(__file__).parent.parent / "pre_calculated"
     db = path / "transformation.db"
 
-    #Check that the two bases have the same dimension
+    # Check that the two bases have the same dimension
     assert len(basis1) == len(basis2), "Bases don't have the same dimension"
-    
+
     return retrieve_S_transform_uncoupled_to_coupled_sqlite(basis1, basis2, db)
 
-def calculate_transform_matrix(basis1, basis2, progress = False, nprocs = 2):
+
+def calculate_transform_matrix(basis1, basis2, progress=False, nprocs=2):
     """
     Function that generates a transform matrix that takes Hamiltonian expressed
     in basis1 to basis2: H_2 = S.conj().T @ H_1 @ S
@@ -49,24 +51,26 @@ def calculate_transform_matrix(basis1, basis2, progress = False, nprocs = 2):
     basis1 to basis2
     """
 
-    #Check that the two bases have the same dimension
+    # Check that the two bases have the same dimension
     assert len(basis1) == len(basis2), "Bases don't have the same dimension"
 
     # multiprocessing
     if nprocs > 1:
         with multiprocessing.Pool(nprocs) as pool:
-            result = pool.starmap(multi_transformation_matrix,
-                [(i,state1,basis2) for i, state1 in enumerate(basis1)])
-        S = np.sum(result, axis = 0)
+            result = pool.starmap(
+                multi_transformation_matrix,
+                [(i, state1, basis2) for i, state1 in enumerate(basis1)],
+            )
+        S = np.sum(result, axis=0)
 
     else:
-        #Initialize S
-        S = np.zeros((len(basis1), len(basis1)), dtype = complex)
+        # Initialize S
+        S = np.zeros((len(basis1), len(basis1)), dtype=complex)
 
-        #Loop over the bases and calculate inner products
-        for i, state1 in enumerate(tqdm(basis1, disable = not progress)):
+        # Loop over the bases and calculate inner products
+        for i, state1 in enumerate(tqdm(basis1, disable=not progress)):
             for j, state2 in enumerate(basis2):
-                S[i,j] = state1@state2
+                S[i, j] = state1 @ state2
 
-    #Return the transform matrix
+    # Return the transform matrix
     return S

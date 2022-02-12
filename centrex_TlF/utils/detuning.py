@@ -1,9 +1,8 @@
 import numpy as np
 import scipy.constants as cst
 
-__all__ = [
-    "doppler_shift", "velocity_to_detuning"
-]
+__all__ = ["doppler_shift", "velocity_to_detuning"]
+
 
 def doppler_shift(velocity, frequency):
     """calculate the doppler shifted freuqency
@@ -15,7 +14,8 @@ def doppler_shift(velocity, frequency):
     Returns:
         float: doppler shifted frequency in Hz
     """
-    return frequency*(1+velocity/cst.c)
+    return frequency * (1 + velocity / cst.c)
+
 
 def velocity_to_detuning(velocity, frequency, Γ):
     """convert velocity to detuning in units of Γ
@@ -28,4 +28,4 @@ def velocity_to_detuning(velocity, frequency, Γ):
     Returns:
         float: detuning in units of Γ
     """
-    return (doppler_shift(velocity, frequency)-frequency)*2*np.pi/Γ
+    return (doppler_shift(velocity, frequency) - frequency) * 2 * np.pi / Γ

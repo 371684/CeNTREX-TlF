@@ -5,9 +5,8 @@ import sympy as smp
 from dataclasses import dataclass
 from centrex_TlF.states import CoupledBasisState
 
-__all__ = [
-    'DecayChannel'
-]
+__all__ = ["DecayChannel"]
+
 
 @dataclass
 class DecayChannel:
@@ -17,12 +16,13 @@ class DecayChannel:
     description: str = ""
 
 
-def add_levels_symbolic_hamiltonian(hamiltonian, decay_channels, QN, excited_states):  
+def add_levels_symbolic_hamiltonian(hamiltonian, decay_channels, QN, excited_states):
     arr = hamiltonian.copy()
-    indices = [i+len(QN) - len(excited_states) for i in range(len(decay_channels))]
+    indices = [i + len(QN) - len(excited_states) for i in range(len(decay_channels))]
     for idx in indices:
         arr = add_level_symbolic_hamiltonian(arr, idx)
     return indices, arr
+
 
 def add_level_symbolic_hamiltonian(hamiltonian, idx):
     arr = hamiltonian.copy()
@@ -30,11 +30,13 @@ def add_level_symbolic_hamiltonian(hamiltonian, idx):
     arr = arr.col_insert(idx, smp.zeros(arr.shape[0], 1))
     return arr
 
+
 def add_states_QN(decay_channels, QN, indices):
     states = copy.copy(QN)
     for idx, decay_channel in zip(indices, decay_channels):
         states.insert(idx, decay_channel.ground)
     return states
+
 
 def add_levels_C_array(C_array, indices):
     arr = C_array.copy()
@@ -44,15 +46,17 @@ def add_levels_C_array(C_array, indices):
         arr = np.insert(arr, idx, np.zeros(arr.shape[1]), 2)
     return arr
 
+
 def add_decays_C_arrays(decay_channels, indices, QN, C_array, Γ):
-    # converting the C arrays to branching ratio arrays and adding the new 
+    # converting the C arrays to branching ratio arrays and adding the new
     # levels
     BR = add_levels_C_array(C_array, indices)
-    BR = BR**2 / Γ
+    BR = BR ** 2 / Γ
 
     # getting the excited state indices
-    indices_excited = [decay_channel.excited.get_indices(QN) for decay_channel 
-                        in decay_channels]
+    indices_excited = [
+        decay_channel.excited.get_indices(QN) for decay_channel in decay_channels
+    ]
     # getting the total added branching ratios for each excited state
     BR_added = {}
     for ides, decay_channel in zip(indices_excited, decay_channels):
@@ -64,17 +68,13 @@ def add_decays_C_arrays(decay_channels, indices, QN, C_array, Γ):
     # renormalizing the old branching ratios to ensure the sum is 1 when adding
     # the new branching ratios
     for ide, BR_add in BR_added.items():
-        BR[:,:,ide] *= (1-BR_add)
+        BR[:, :, ide] *= 1 - BR_add
 
     # adding the new branching ratios
     for idg, ides, decay_channel in zip(indices, indices_excited, decay_channels):
         for ide in ides:
-            BR_new = np.zeros([1,*BR[0,:,:].shape], dtype = complex)
-            BR_new[:,idg,ide] = decay_channel.branching
-            BR = np.append(BR, BR_new, axis = 0)
+            BR_new = np.zeros([1, *BR[0, :, :].shape], dtype=complex)
+            BR_new[:, idg, ide] = decay_channel.branching
+            BR = np.append(BR, BR_new, axis=0)
     # converting the branching ratios to C arrays
-    return np.sqrt(BR*Γ)
-
-
-
-
+    return np.sqrt(BR * Γ)

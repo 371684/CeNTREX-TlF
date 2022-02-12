@@ -1,8 +1,6 @@
 import numpy as np
 
-__all__ = [
-    ''
-]
+__all__ = [""]
 
 
 def compact_QN_coupled_indices(QN, indices_compact):
@@ -40,6 +38,6 @@ def compact_QN_coupled_indices(QN, indices_compact):
         state_rep.P = None
 
     # make it a state again instead of uncoupled basisstate
-    QNcompact[indices_compact[0]] = (1.0 + 0j) * state_rep    
+    QNcompact[indices_compact[0]] = (1.0 + 0j) * state_rep
 
     return QNcompact
