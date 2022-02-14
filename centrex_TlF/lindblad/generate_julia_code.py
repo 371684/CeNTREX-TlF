@@ -24,7 +24,8 @@ def generate_preamble(odepars: odeParameters, transitions: list) -> str:
     for transition in transitions:
         preamble += f"\t\t{transition.Ω}ᶜ = conj({transition.Ω})\n"
 
-    # remove duplicate lines (if multiple transitions have the same Rabi rate symbol or detuning
+    # remove duplicate lines (if multiple transitions have the same Rabi rate symbol or
+    # detuning
     preamble = "\n".join(list(OrderedDict.fromkeys(preamble.split("\n"))))
 
     # for a list of lists type inference doesn't work, setting types explicitly

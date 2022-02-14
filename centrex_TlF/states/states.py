@@ -1,11 +1,9 @@
 import hashlib
 import json
-from functools import lru_cache
-
-import numpy as np
-import sympy as sp
 
 import centrex_TlF
+import numpy as np
+import sympy as sp
 
 __all__ = ["CoupledBasisState", "UncoupledBasisState", "State"]
 
@@ -125,13 +123,13 @@ class CoupledBasisState:
 
         string = f"J = {J}, F₁ = {F1}, F = {F}, mF = {mF}, I₁ = {I1}, I₂ = {I2}"
 
-        if electronic_state != None:
+        if electronic_state is not None:
             string = f"{electronic_state}, {string}"
-        if P != None:
+        if P is not None:
             string = f"{string}, P = {P}"
-        if Omega != None:
+        if Omega is not None:
             string = f"{string}, Ω = {Omega}"
-        if v != None:
+        if v is not None:
             string = f"{string}, v = {v}"
         return "|" + string + ">"
 
@@ -194,7 +192,7 @@ class CoupledBasisState:
         Omega = self.Omega
 
         # Check that not already in omega basis
-        if not P == None and not electronic_state == "X":
+        if P is not None and not electronic_state == "X":
             state_minus = 1 * CoupledBasisState(
                 F,
                 mF,
@@ -346,11 +344,11 @@ class UncoupledBasisState:
 
         string = f"J = {J}, mJ = {mJ}, I₁ = {I1}, m₁ = {m1}, I₂ = {I2}, m₂ = {m2}"
 
-        if electronic_state != None:
+        if electronic_state is not None:
             string = f"{electronic_state}, {string}"
-        if P != None:
+        if P is not None:
             string = f"{string}, P = {P}"
-        if Omega != None:
+        if Omega is not None:
             string = f"{string}, Ω = {Omega}"
         return "|" + string + ">"
 
@@ -415,7 +413,7 @@ class UncoupledBasisState:
         Omega = self.Omega
 
         # Check that not already in omega basis
-        if not P == None and not electronic_state == "X":
+        if P is not None and not electronic_state == "X":
             state_minus = 1 * UncoupledBasisState(
                 J,
                 mJ,
@@ -640,7 +638,6 @@ class State:
 
         for i in range(0, n):
             basis_state = state.data[i][1]
-            amp = state.data[i][0]
             basis_state.print_quantum_numbers()
 
         return string
@@ -695,7 +692,8 @@ class State:
 
         return state
 
-    # Method for obtaining time-reversed version of state (i.e. just reverse all projection quantum numbers)
+    # Method for obtaining time-reversed version of state (i.e. just reverse all
+    # projection quantum numbers)
     def time_reversed(self):
         new_data = []
 

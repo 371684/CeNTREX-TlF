@@ -8,8 +8,16 @@ def retrieve_ED_ME_coupled_sqlite_single_rme(a, b, pol_vec, con):
     table = "ED_ME_coupled_rme"
     with con:
         cur = con.cursor()
-        string = f"J₁ = {a.J} AND F1₁ = {a.F1} AND F₁ = {int(a.F)} AND mF₁ = {int(a.mF)} AND I1₁ = {a.I1} AND I2₁ = {a.I2} AND Ω₁ = {int(a.Omega)} AND state₁ = '{a.electronic_state}' "
-        string += f"AND J₂ = {b.J} AND F1₂ = {b.F1} AND F₂ = {int(b.F)} AND mF₂ = {int(b.mF)} AND I1₂ = {b.I1} AND I2₂ = {b.I2} AND Ω₂ = {int(b.Omega)} AND state₂ = '{b.electronic_state}' "
+        string = (
+            f"J₁ = {a.J} AND F1₁ = {a.F1} AND F₁ = {int(a.F)} AND mF₁ = {int(a.mF)} "
+            f"AND I1₁ = {a.I1} AND I2₁ = {a.I2} AND Ω₁ = {int(a.Omega)} "
+            f"AND state₁ = '{a.electronic_state}' "
+        )
+        string += (
+            f"AND J₂ = {b.J} AND F1₂ = {b.F1} AND F₂ = {int(b.F)} AND mF₂ = {int(b.mF)}"
+            f" AND I1₂ = {b.I1} AND I2₂ = {b.I2} AND Ω₂ = {int(b.Omega)} "
+            f"AND state₂ = '{b.electronic_state}' "
+        )
         cur.execute(f"select value_real, value_imag from {table} WHERE {string}")
         values = cur.fetchall()
         if values:
@@ -24,9 +32,20 @@ def retrieve_ED_ME_coupled_sqlite_single(a, b, pol_vec, con):
     table = "ED_ME_coupled"
     with con:
         cur = con.cursor()
-        string = f"J₁ = {a.J} AND F1₁ = {a.F1} AND F₁ = {int(a.F)} AND mF₁ = {int(a.mF)} AND I1₁ = {a.I1} AND I2₁ = {a.I2} AND Ω₁ = {int(a.Omega)} AND state₁ = '{a.electronic_state}' "
-        string += f"AND J₂ = {b.J} AND F1₂ = {b.F1} AND F₂ = {int(b.F)} AND mF₂ = {int(b.mF)} AND I1₂ = {b.I1} AND I2₂ = {b.I2} AND Ω₂ = {int(b.Omega)} AND state₂ = '{b.electronic_state}' "
-        string += f"AND Px = {int(pol_vec[0])} AND Py = {int(pol_vec[1])} AND Pz = {int(pol_vec[2])}"
+        string = (
+            f"J₁ = {a.J} AND F1₁ = {a.F1} AND F₁ = {int(a.F)} AND mF₁ = {int(a.mF)} "
+            f"AND I1₁ = {a.I1} AND I2₁ = {a.I2} AND Ω₁ = {int(a.Omega)} "
+            f"AND state₁ = '{a.electronic_state}' "
+        )
+        string += (
+            f"AND J₂ = {b.J} AND F1₂ = {b.F1} AND F₂ = {int(b.F)} AND mF₂ = {int(b.mF)}"
+            f" AND I1₂ = {b.I1} AND I2₂ = {b.I2} AND Ω₂ = {int(b.Omega)} "
+            f"AND state₂ = '{b.electronic_state}' "
+        )
+        string += (
+            f"AND Px = {int(pol_vec[0])} AND Py = {int(pol_vec[1])} "
+            f"AND Pz = {int(pol_vec[2])}"
+        )
         cur.execute(f"select value_real, value_imag from {table} WHERE {string}")
         values = cur.fetchall()
         if values:

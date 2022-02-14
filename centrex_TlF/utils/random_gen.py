@@ -17,7 +17,10 @@ def generate_random_coords_circle_2D(n, σ):
     Returns:
         np.ndarray: 2D array with xy coordinates
     """
-    generate_random_r = lambda n, σ: np.random.normal(0, σ, n)
+
+    def generate_random_r(n, σ):
+        return np.random.normal(0, σ, n)
+
     xy = np.empty([2, n])
     xy[0, :] = generate_random_r(n, σ)
     xy[1, :] = generate_random_r(n, σ)

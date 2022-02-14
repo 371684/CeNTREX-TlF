@@ -1,12 +1,11 @@
 import copy
 
 import numpy as np
-from tqdm import tqdm
-
 from centrex_TlF.couplings.branching import calculate_BR
 from centrex_TlF.couplings.utils_compact import compact_C_array, compact_C_array_indices
 from centrex_TlF.states.utils import QuantumSelector, get_indices_quantumnumbers
 from centrex_TlF.states.utils_compact import compact_QN_coupled_indices
+from tqdm import tqdm
 
 __all__ = ["collapse_matrices"]
 
@@ -32,8 +31,8 @@ def collapse_matrices(
     tol = couplings smaller than tol/sqrt(gamma) are set to zero to speed up computation
     progress = boolean flag to display a tqdm progress bar
     slice_compact = np._s of indices to compact into one state
-    qn_compact = list of QuantumSelectors or lists of QuantumSelectors with each 
-                QuantumSelector containing the quantum numbers to compact into a 
+    qn_compact = list of QuantumSelectors or lists of QuantumSelectors with each
+                QuantumSelector containing the quantum numbers to compact into a
                 single state. Defaults to None.
 
     outputs:

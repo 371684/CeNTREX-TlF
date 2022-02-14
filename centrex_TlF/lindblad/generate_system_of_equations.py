@@ -1,11 +1,10 @@
 import multiprocessing
 
 import numpy as np
-from sympy import zeros
-from tqdm import tqdm
-
 from centrex_TlF.lindblad.utils import generate_density_matrix_symbolic
 from centrex_TlF.lindblad.utils_multiprocessing import multi_C_ρ_Cconj
+from sympy import zeros
+from tqdm import tqdm
 
 __all__ = ["generate_system_of_equations_symbolic"]
 

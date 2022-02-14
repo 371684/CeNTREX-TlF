@@ -79,13 +79,13 @@ def generate_ode_fun_julia(preamble, code_lines):
     generated in Python.
 
     Args:
-        preamble (str): preamble of the ODE function initializing the 
+        preamble (str): preamble of the ODE function initializing the
                         function variable definitions.
         code_lines (list): list of strings, each line is a generated
                             line of Julia code for part of the ODE.
 
     Returns:
-        str : function definition of the ODE 
+        str : function definition of the ODE
     """
     ode_fun = preamble
     for cline in code_lines:
@@ -97,7 +97,7 @@ def generate_ode_fun_julia(preamble, code_lines):
 
 def setup_variables_julia(Γ, ρ, vars=None):
     """
-    Convenience function for loading Γ, ρ and specified vars 
+    Convenience function for loading Γ, ρ and specified vars
     in Julia memory.
 
     Args:
@@ -142,7 +142,8 @@ julia_funcs = [
 
 class odeParameters:
     def __init__(self, *args, **kwargs):
-        # if elif statement is for legacy support, where a list of parameters was supplied
+        # if elif statement is for legacy support, where a list of parameters was
+        # supplied
         if len(args) > 1:
             raise AssertionError(
                 "For legacy support supply a list of strings, one for each parameter"
@@ -259,7 +260,7 @@ class odeParameters:
         symbols_expressions = self._get_expression_symbols()
 
         warn_flag = False
-        warn_string = f"Symbol(s) not defined: "
+        warn_string = "Symbol(s) not defined: "
         for se in symbols_expressions:
             if se not in symbols_defined:
                 warn_flag = True
@@ -279,7 +280,7 @@ class odeParameters:
         parameters += ["t"]
 
         warn_flag = False
-        warn_string = f"Symbol(s) not defined: "
+        warn_string = "Symbol(s) not defined: "
         for se in symbols_other:
             if se not in parameters:
                 warn_flag = True
@@ -351,7 +352,7 @@ class odeParameters:
         symbols_defined = self._get_defined_symbols()
 
         warn_flag = False
-        warn_string = f"Symbol(s) in transition polarization switching not defined: "
+        warn_string = "Symbol(s) in transition polarization switching not defined: "
         for ch in to_check:
             if ch not in symbols_defined:
                 warn_flag = True
@@ -364,14 +365,14 @@ class odeParameters:
         Main.eval(f"p = {self.p}")
 
     def __repr__(self):
-        rep = f"OdeParameters("
+        rep = "OdeParameters("
         for par in self._parameters:
             rep += f"{par}={getattr(self, par)}, "
         return rep.strip(", ") + ")"
 
     def get_parameter_evolution(self, t, parameter):
         """Get the time evolution of parameters in odeParameters.
-        Evaluates expressions in python if possible, otherwise calls julia to 
+        Evaluates expressions in python if possible, otherwise calls julia to
         evaluate the expressions
 
         Args:
@@ -446,9 +447,10 @@ class odeParameters:
                 expression = expression.replace(", 0,", ", 0.0,")
                 # evaluate the specified parameter expression in julia
                 Main.eval(f"_tmp_func(t) = {str(expression)}")
-                # can't get broadcasting to work if some variables are of array or list type, use map
+                # can't get broadcasting to work if some variables are of array or list
+                # type, use map
                 Main.tmp_t = t
-                return Main.eval(f"map(_tmp_func, tmp_t)")
+                return Main.eval("map(_tmp_func, tmp_t)")
             else:
                 # evaluate the specified parameter expression in python
                 func = lambdify(smp.Symbol("t"), expression, modules=["numpy", "scipy"])
@@ -599,7 +601,10 @@ def setup_ratio_calculation(states, output_func=None):
     cmd = ""
     if isinstance(states[0], (list, np.ndarray, tuple)):
         for state in states:
-            cmd += f"sum(real(diag(sol.u[end])[{state}]))/sum(real(diag(sol.u[1])[{state}])), "
+            cmd += (
+                f"sum(real(diag(sol.u[end])[{state}]))/"
+                f"sum(real(diag(sol.u[1])[{state}])), "
+            )
         cmd = cmd.strip(", ")
         cmd = "[" + cmd + "]"
     else:
@@ -643,12 +648,12 @@ def setup_initial_condition_scan(values):
 
 
 def setup_state_integral_calculation(states, output_func=None, nphotons=False, Γ=None):
-    """Setup an integration output_function for an EnsembleProblem. 
+    """Setup an integration output_function for an EnsembleProblem.
     Uses trapezoidal integration to integrate the states.
-    
+
     Args:
         states (list): list of state indices to integrate
-        nphotons (bool, optional): flag to calculate the number of photons, 
+        nphotons (bool, optional): flag to calculate the number of photons,
                                     e.g. normalize with Γ
         Γ (float, optional): decay rate in 2π Hz (rad/s), not necessary if already
                                 loaded into Julia globals
@@ -700,7 +705,7 @@ def setup_state_integral_map(
             for i=1:{int(xmax/Δx)}
                 t = Δt*(i-1) + Δt/2
                 results[i,1] = t*vx
-                results[i,2] = Γ*trapz(tarray .+ (t-Δt/2), 
+                results[i,2] = Γ*trapz(tarray .+ (t-Δt/2),
                                     [sum(diag(real(sol(ti + (t-Δt/2))))[{states}]) for ti in tarray]
                                 )
             end
@@ -782,7 +787,7 @@ def setup_problem_parameter_scan(
     if output_func is not None:
         Main.eval(
             f"""
-            ens_{problem_name} = EnsembleProblem({problem_name}, 
+            ens_{problem_name} = EnsembleProblem({problem_name},
                                                     prob_func = prob_func,
                                                     output_func = {output_func}
                                                 )
@@ -791,7 +796,7 @@ def setup_problem_parameter_scan(
     else:
         Main.eval(
             f"""
-            ens_{problem_name} = EnsembleProblem({problem_name}, 
+            ens_{problem_name} = EnsembleProblem({problem_name},
                                                     prob_func = prob_func)
         """
         )
@@ -822,11 +827,11 @@ def solve_problem(
     if callback is not None:
         Main.eval(
             f"""
-            sol = solve({problem_name}, {method}, abstol = {abstol}, 
-                        reltol = {reltol}, dt = {dt}, 
-                        progress = {str(progress).lower()}, 
-                        callback = {callback}, saveat = {saveat}, 
-                        dtmin = {dtmin}, maxiters = {maxiters}, 
+            sol = solve({problem_name}, {method}, abstol = {abstol},
+                        reltol = {reltol}, dt = {dt},
+                        progress = {str(progress).lower()},
+                        callback = {callback}, saveat = {saveat},
+                        dtmin = {dtmin}, maxiters = {maxiters},
                         force_dtmin = {force_dtmin}
                     )
         """
@@ -834,7 +839,7 @@ def solve_problem(
     else:
         Main.eval(
             f"""
-            sol = solve({problem_name}, {method}, abstol = {abstol}, 
+            sol = solve({problem_name}, {method}, abstol = {abstol},
                         reltol = {reltol}, dt = {dt},
                         progress = {str(progress).lower()}, saveat = {saveat},
                         dtmin = {dtmin}, maxiters = {maxiters},
@@ -863,7 +868,7 @@ def solve_problem_parameter_scan(
     if callback is not None:
         Main.eval(
             f"""
-            sol = solve({ensemble_problem_name}, {method}, {distributed_method}, 
+            sol = solve({ensemble_problem_name}, {method}, {distributed_method},
                         abstol = {abstol}, reltol = {reltol}, dt = {dt},
                         trajectories = {trajectories}, callback = {callback},
                         save_everystep = {str(save_everystep).lower()},
@@ -874,7 +879,7 @@ def solve_problem_parameter_scan(
     else:
         Main.eval(
             f"""
-            sol = solve({ensemble_problem_name}, {method}, {distributed_method}, 
+            sol = solve({ensemble_problem_name}, {method}, {distributed_method},
                         abstol = {abstol}, reltol = {reltol}, dt = {dt},
                         trajectories = {trajectories},
                         save_everystep = {str(save_everystep).lower()},
@@ -918,17 +923,17 @@ def do_simulation_single(
     dtmin=None,
     maxiters=None,
 ):
-    """Perform a single trajectory solve of the OBE equations for a specified 
+    """Perform a single trajectory solve of the OBE equations for a specified
     TlF system.
 
     Args:
         odepars (odeParameters): object containing the ODE parameters used in
         the solver
         tspan (list, tuple): time range to solve for
-        terminate_expression (str, optional): Expression that determines when to 
+        terminate_expression (str, optional): Expression that determines when to
                                             stop integration. Defaults to None.
-        saveat (array or float, optional): save solution at timesteps given by 
-                                            saveat, either a list or every 
+        saveat (array or float, optional): save solution at timesteps given by
+                                            saveat, either a list or every
                                             saveat
         dtmin (float, optional): minimum dt allowed for adaptive timestepping
         maxiters (float, optional): maximum number of steps allowed

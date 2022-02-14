@@ -2,8 +2,6 @@ import json
 import sqlite3
 from pathlib import Path
 
-import numpy as np
-
 
 def retrieve_uncoupled_hamiltonian_X_sqlite(QN, db):
     con = sqlite3.connect(db)
@@ -15,7 +13,12 @@ def retrieve_uncoupled_hamiltonian_X_sqlite(QN, db):
             for i, a in enumerate(QN):
                 for j in range(i, len(QN)):
                     b = QN[j]
-                    string = f"J₁ = {a.J} AND mJ₁ = {a.mJ} AND I1₁ = {a.I1} AND m1₁ = {a.m1} AND I2₁ = {a.I2} AND m2₁ = {a.m2} AND J₂ = {b.J} AND mJ₂ = {b.mJ} AND I1₂ = {b.I1} AND m1₂ = {b.m1} AND I2₂ = {b.I2} AND m2₂ = {b.m2}"
+                    string = (
+                        f"J₁ = {a.J} AND mJ₁ = {a.mJ} AND I1₁ = {a.I1} AND m1₁ = {a.m1}"
+                        f" AND I2₁ = {a.I2} AND m2₁ = {a.m2} AND J₂ = {b.J} "
+                        f"AND mJ₂ = {b.mJ} AND I1₂ = {b.I1} AND m1₂ = {b.m1} "
+                        f"AND I2₂ = {b.I2} AND m2₂ = {b.m2}"
+                    )
                     cur.execute(
                         f"select value_real, value_imag from {term} WHERE {string}"
                     )
@@ -48,7 +51,13 @@ def retrieve_coupled_hamiltonian_B_sqlite(QN, db):
             for i, a in enumerate(QN):
                 for j in range(i, len(QN)):
                     b = QN[j]
-                    string = f"J₁ = {a.J} AND F1₁ = {a.F1} AND F₁ = {a.F} AND mF₁ = {a.mF} AND I1₁ = {a.I1} AND I2₁ = {a.I2} AND P₁ = {a.P} AND J₂ = {b.J} AND F1₂ = {b.F1} AND F₂ = {b.F} AND mF₂ = {b.mF} AND I1₂ = {b.I1} AND I2₂ = {b.I2} AND P₂ = {b.P}"
+                    string = (
+                        f"J₁ = {a.J} AND F1₁ = {a.F1} AND F₁ = {a.F} AND mF₁ = {a.mF} "
+                        f"AND I1₁ = {a.I1} AND I2₁ = {a.I2} AND P₁ = {a.P} "
+                        f"AND J₂ = {b.J} AND F1₂ = {b.F1} AND F₂ = {b.F} "
+                        f"AND mF₂ = {b.mF} AND I1₂ = {b.I1} AND I2₂ = {b.I2} "
+                        f"AND P₂ = {b.P}"
+                    )
                     cur.execute(
                         f"select value_real, value_imag from {term} WHERE {string}"
                     )
@@ -71,9 +80,14 @@ def retrieve_S_transform_uncoupled_to_coupled_sqlite(basis1, basis2, db):
     with con:
         for i, a in enumerate(basis1):
             for j, b in enumerate(basis2):
-                string = f"J = {a.J} AND mJ = {a.mJ} AND I1 = {a.I1} AND m1 = {a.m1} AND I2 = {a.I2} AND m2 = {a.m2} AND Jc = {b.J} AND F1 = {b.F1} AND F = {b.F} AND mF = {b.mF} AND I1 = {b.I1} AND I2 = {b.I2}"
+                string = (
+                    f"J = {a.J} AND mJ = {a.mJ} AND I1 = {a.I1} AND m1 = {a.m1} "
+                    f"AND I2 = {a.I2} AND m2 = {a.m2} AND Jc = {b.J} AND F1 = {b.F1} "
+                    f"AND F = {b.F} AND mF = {b.mF} AND I1 = {b.I1} AND I2 = {b.I2}"
+                )
                 cur.execute(
-                    f"select value_real, value_imag from uncoupled_to_coupled WHERE {string}"
+                    "select value_real, value_imag from uncoupled_to_coupled WHERE "
+                    f"{string}"
                 )
                 values = cur.fetchall()
                 if values:

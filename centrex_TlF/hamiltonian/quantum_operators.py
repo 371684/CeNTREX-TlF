@@ -3,7 +3,7 @@ import numpy as np
 from centrex_TlF.states.states import State, UncoupledBasisState
 
 ########################################################
-### Diagonal operators multiple state by eigenvalue
+# Diagonal operators multiple state by eigenvalue
 ########################################################
 
 
@@ -32,7 +32,7 @@ def I2z(psi):
 
 
 ########################################################
-###
+#
 ########################################################
 
 
@@ -162,7 +162,7 @@ def I2y(psi):
 
 
 ########################################################
-### Composition of operators
+# Composition of operators
 ########################################################
 
 

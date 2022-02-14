@@ -1,5 +1,4 @@
 import numpy as np
-
 from centrex_TlF.couplings.matrix_elements import generate_ED_ME_mixed_state
 
 __all__ = ["calculate_BR"]
@@ -7,13 +6,13 @@ __all__ = ["calculate_BR"]
 
 def calculate_BR(excited_state, ground_states, tol=1e-5):
     """
-    Function that calculates branching ratios from the given excited state to 
+    Function that calculates branching ratios from the given excited state to
     the given ground states
 
     inputs:
-    excited_state = state object representing the excited state that is 
+    excited_state = state object representing the excited state that is
                     spontaneously decaying
-    ground_states = list of state objects that should span all the states to 
+    ground_states = list of state objects that should span all the states to
                     which the excited state can decay
 
     returns:

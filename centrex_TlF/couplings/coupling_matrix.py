@@ -1,10 +1,8 @@
-import logging
 import multiprocessing
 import sqlite3
 from pathlib import Path
 
 import numpy as np
-
 from centrex_TlF.couplings.matrix_elements import (
     calculate_ED_ME_mixed_state,
     generate_ED_ME_mixed_state,
@@ -42,7 +40,8 @@ def generate_coupling_matrix(
         QN (list): list of basis states
         ground_states (list): list of ground states coupling to excited states
         excited_states (list): list of excited states
-        pol_vec (np.ndarray, optional): polarization vector. Defaults to np.array([0,0,1]).
+        pol_vec (np.ndarray, optional): polarization vector. Defaults to
+                                        np.array([0,0,1]).
         reduced (bool, optional): [description]. Defaults to False.
         normalize_pol (bool, optional): Normalize the polarization vector.
                                         Defaults to True.
@@ -113,7 +112,8 @@ def calculate_coupling_matrix(
         QN (list): list of basis states
         ground_states (list): list of ground states coupling to excited states
         excited_states (list): list of excited states
-        pol_vec (np.ndarray, optional): polarization vector. Defaults to np.array([0,0,1]).
+        pol_vec (np.ndarray, optional): polarization vector. Defaults to
+                                        np.array([0,0,1]).
         reduced (bool, optional): [description]. Defaults to False.
         normalize_pol (bool, optional): Normalize the polarization vector.
                                         Defaults to True.
@@ -278,7 +278,7 @@ def generate_coupling_field_automatic(
     absolute_coupling=1e-6,
     nprocs=2,
 ):
-    """Generate the coupling fields for a transition for one or multiple 
+    """Generate the coupling fields for a transition for one or multiple
     polarizations. Uses pre-cached values where possible.
 
     Args:
@@ -288,11 +288,11 @@ def generate_coupling_field_automatic(
         QN (list): list of states in the system
         V_ref ([type]): [description]
         pol_vec (list, optional): list of polarizations. Defaults to [].
-        relative_coupling (float, optional): minimum relative coupling, set 
-                                            smaller coupling to zero. 
+        relative_coupling (float, optional): minimum relative coupling, set
+                                            smaller coupling to zero.
                                             Defaults to 1e-3.
-        absolute_coupling (float, optional): minimum absolute coupling, set 
-                                            smaller couplings to zero. 
+        absolute_coupling (float, optional): minimum absolute coupling, set
+                                            smaller couplings to zero.
                                             Defaults to 1e-6.
         nprocs (int, optional): number of processes to employ. Defaults to 2.
 
@@ -369,7 +369,7 @@ def calculate_coupling_field_automatic(
     absolute_coupling=1e-6,
     nprocs=2,
 ):
-    """Calculate the coupling fields for a transition for one or multiple 
+    """Calculate the coupling fields for a transition for one or multiple
     polarizations.
 
     Args:
@@ -379,11 +379,11 @@ def calculate_coupling_field_automatic(
         QN (list): list of states in the system
         V_ref ([type]): [description]
         pol_vec (list, optional): list of polarizations. Defaults to [].
-        relative_coupling (float, optional): minimum relative coupling, set 
-                                            smaller coupling to zero. 
+        relative_coupling (float, optional): minimum relative coupling, set
+                                            smaller coupling to zero.
                                             Defaults to 1e-3.
-        absolute_coupling (float, optional): minimum absolute coupling, set 
-                                            smaller couplings to zero. 
+        absolute_coupling (float, optional): minimum absolute coupling, set
+                                            smaller couplings to zero.
                                             Defaults to 1e-6.
         nprocs (int, optional): number of processes to employ. Defaults to 2.
 

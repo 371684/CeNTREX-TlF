@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.constants as cst
-
 from centrex_TlF.couplings.utils_compact import delete_row_column
 from centrex_TlF.states.utils import QuantumSelector
 
@@ -28,7 +27,10 @@ def thermal_population(J, T, B=6.66733e9, n=100):
         float: relative population in a rotational sublevel
     """
     c = 2 * np.pi * cst.hbar * B / (cst.k * T)
-    a = lambda J: -c * J * (J + 1)
+
+    def a(J):
+        return -c * J * (J + 1)
+
     Z = np.sum([J_levels(i) * np.exp(a(i)) for i in range(n)])
     return J_levels(J) * np.exp(a(J)) / Z
 
@@ -55,7 +57,7 @@ def J_slice(J):
         numpy slice: numpy slice object
     """
     if J == 0:
-        return np.s_[: J_levels(0)]
+        return np.s_[0 : J_levels(0)]
     else:
         levels = J_levels(np.arange(J + 1))
         return np.s_[np.sum(levels[:-1]) : np.sum(levels)]

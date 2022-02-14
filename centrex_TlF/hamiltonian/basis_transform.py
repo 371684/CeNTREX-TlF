@@ -2,12 +2,11 @@ import multiprocessing
 from pathlib import Path
 
 import numpy as np
-from tqdm import tqdm
-
 from centrex_TlF.hamiltonian.utils_multiprocessing import multi_transformation_matrix
 from centrex_TlF.hamiltonian.utils_sqlite import (
     retrieve_S_transform_uncoupled_to_coupled_sqlite,
 )
+from tqdm import tqdm
 
 __all__ = ["generate_transform_matrix", "calculate_transform_matrix"]
 
@@ -24,7 +23,7 @@ def generate_transform_matrix(basis1, basis2, progress=False):
     progress = boolean to display tqdm progress bar
 
     returns:
-    S = transformation matrix that takes Hamiltonian (or any operator) from 
+    S = transformation matrix that takes Hamiltonian (or any operator) from
     basis1 to basis2
     """
     path = Path(__file__).parent.parent / "pre_calculated"
@@ -49,7 +48,7 @@ def calculate_transform_matrix(basis1, basis2, progress=False, nprocs=2):
     nprocs = number of processes to utilize with multiprocessing
 
     returns:
-    S = transformation matrix that takes Hamiltonian (or any operator) from 
+    S = transformation matrix that takes Hamiltonian (or any operator) from
     basis1 to basis2
     """
 

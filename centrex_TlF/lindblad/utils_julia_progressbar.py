@@ -43,7 +43,7 @@ def solve_problem_parameter_scan_progress(
         )
     Main.eval(
         f"""
-        {ensemble_problem_name} = EnsembleProblem({problem_name}, 
+        {ensemble_problem_name} = EnsembleProblem({problem_name},
                                                 prob_func = prob_func,
                                                 output_func = output_func_progress
                                             )
@@ -71,10 +71,10 @@ def solve_problem_parameter_scan_progress(
                 end
             end
             @async begin
-                @time global sol = solve({ensemble_problem_name}, {method}, 
+                @time global sol = solve({ensemble_problem_name}, {method},
                             {distributed_method}, trajectories={trajectories},
-                            abstol = {abstol}, reltol = {reltol}, 
-                            callback = {callback}, 
+                            abstol = {abstol}, reltol = {reltol},
+                            callback = {callback},
                             save_everystep = {str(save_everystep).lower()},
                             saveat = {saveat})
             end

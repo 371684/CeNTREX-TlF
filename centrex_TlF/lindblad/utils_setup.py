@@ -2,9 +2,6 @@ import logging
 from dataclasses import dataclass
 
 import numpy as np
-from julia import Main
-from numpy.lib.arraysetops import isin
-
 from centrex_TlF.couplings.collapse import collapse_matrices
 from centrex_TlF.couplings.coupling_matrix import (
     generate_coupling_field,
@@ -33,6 +30,7 @@ from centrex_TlF.states.generate_states import (
     generate_coupled_states_excited_B,
     generate_coupled_states_ground_X,
 )
+from julia import Main
 
 __all__ = ["generate_OBE_system", "setup_OBE_system_julia"]
 
@@ -88,16 +86,25 @@ def generate_OBE_system(
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
         logger.info("generate_OBE_system: 1/6 -> Generating the reduced Hamiltonian")
-    X_states, B_states, QN, H_int, V_ref_int = generate_total_reduced_hamiltonian(
-        ground_states_approx=generate_coupled_states_ground_X(system_parameters.X),
-        excited_states_approx=generate_coupled_states_excited_B(system_parameters.B),
+    (
+        ground_states,
+        excited_states,
+        QN,
+        H_int,
+        V_ref_int,
+    ) = generate_total_reduced_hamiltonian(
+        ground_states_approx=generate_coupled_states_ground_X(system_parameters.ground),
+        excited_states_approx=generate_coupled_states_excited_B(
+            system_parameters.excited
+        ),
         Jmin=Jmin,
         Jmax=Jmax,
         rtol=rtol,
     )
     if verbose:
         logger.info(
-            "generate_OBE_system: 2/6 -> Generating the couplings corresponding to the transitions"
+            "generate_OBE_system: 2/6 -> "
+            "Generating the couplings corresponding to the transitions"
         )
     couplings = []
     for transition in transitions:
@@ -143,7 +150,11 @@ def generate_OBE_system(
     if verbose:
         logger.info("generate_OBE_system: 4/6 -> Generating the collapse matrices")
     C_array = collapse_matrices(
-        QN, X_states, B_states, gamma=system_parameters.Γ, qn_compact=qn_compact
+        QN,
+        ground_states,
+        excited_states,
+        gamma=system_parameters.Γ,
+        qn_compact=qn_compact,
     )
 
     if decay_channels is not None:
@@ -151,7 +162,7 @@ def generate_OBE_system(
             decay_channels = np.ndarray(decay_channels)
         if qn_compact is not None:
             indices, H_symbolic = add_levels_symbolic_hamiltonian(
-                H_symbolic, decay_channels, QN_compact, B_states
+                H_symbolic, decay_channels, QN_compact, excited_states
             )
             QN_compact = add_states_QN(decay_channels, QN_compact, indices)
             C_array = add_decays_C_arrays(
@@ -159,7 +170,7 @@ def generate_OBE_system(
             )
         else:
             indices, H_symbolic = add_levels_symbolic_hamiltonian(
-                H_symbolic, decay_channels, QN, B_states
+                H_symbolic, decay_channels, QN, excited_states
             )
             QN = add_states_QN(decay_channels, QN_compact, indices)
             C_array = add_decays_C_arrays(
@@ -167,14 +178,16 @@ def generate_OBE_system(
             )
     if verbose:
         logger.info(
-            "generate_OBE_system: 5/6 -> Transforming the Hamiltonian and collapse matrices into a symbolic system of equations"
+            "generate_OBE_system: 5/6 -> Transforming the Hamiltonian and collapse "
+            "matrices into a symbolic system of equations"
         )
     system = generate_system_of_equations_symbolic(
         H_symbolic, C_array, progress=False, fast=True
     )
     if verbose:
         logger.info(
-            "generate_OBE_system: 6/6 -> Generating Julia code representing the system of equations"
+            "generate_OBE_system: 6/6 -> Generating Julia code representing the system "
+            "of equations"
         )
         logging.basicConfig(level=logging.WARNING)
     code_lines = system_of_equations_to_lines(system, nprocs=system_parameters.nprocs)
@@ -185,8 +198,8 @@ def generate_OBE_system(
         QN_original = None
     obe_system = OBESystem(
         QN=QN,
-        ground=X_states,
-        excited=B_states,
+        ground=ground_states,
+        excited=excited_states,
         couplings=couplings,
         H_symbolic=H_symbolic,
         H_int=H_int,
@@ -209,14 +222,14 @@ def setup_OBE_system_julia(
     decay_channels=None,
     verbose=False,
 ):
-    """Convenience function for generating the OBE system and initializing it in 
+    """Convenience function for generating the OBE system and initializing it in
     Julia
 
     Args:
-        system_parameters (SystemParameters): dataclass holding the system 
-                                                parameters, e.g. Γ, 
+        system_parameters (SystemParameters): dataclass holding the system
+                                                parameters, e.g. Γ,
                                                 (laser) ground states,
-                                                (laser) excited states 
+                                                (laser) excited states
         ode_parameters (odeParameters): dataclass containing the ode parameters.
                                         e.g. Ω, δ, vz, ..., etc.
         transitions (TransitionSelector): object containing all information
@@ -226,7 +239,7 @@ def setup_OBE_system_julia(
         qn_compact (QuantumSelector): dataclass specifying a subset of states to
                                         select based on the quantum numbers
         full_output (bool, optional): Returns all matrices, states etc. if True,
-                                        Returns only QN if False. 
+                                        Returns only QN if False.
                                         Defaults to False.
         verbose (bool, optional): Log progress to INFO. Defaults to False.
 
@@ -235,7 +248,7 @@ def setup_OBE_system_julia(
             list: list of states in system
         full_output == False:
             OBESystem: dataclass designed to hold the generated values
-                        ground, exxcited, QN, H_int, V_ref_int, couplings, 
+                        ground, exxcited, QN, H_int, V_ref_int, couplings,
                         H_symbolic, C_array, system, code_lines, preamble
     """
     obe_system = generate_OBE_system(
@@ -255,13 +268,15 @@ def setup_OBE_system_julia(
 
     if verbose:
         logger.info(
-            f"setup_OBE_system_julia: 2/3 -> Initializing Julia on {system_parameters.nprocs} cores"
+            "setup_OBE_system_julia: 2/3 -> Initializing Julia on "
+            f"{system_parameters.nprocs} cores"
         )
     initialize_julia(nprocs=system_parameters.nprocs)
 
     if verbose:
         logger.info(
-            "setup_OBE_system_julia: 3/3 -> Defining the ODE equation and parameters in Julia"
+            "setup_OBE_system_julia: 3/3 -> Defining the ODE equation and parameters in"
+            " Julia"
         )
         logging.basicConfig(level=logging.WARNING)
     generate_ode_fun_julia(obe_system.preamble, obe_system.code_lines)

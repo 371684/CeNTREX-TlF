@@ -1,4 +1,5 @@
-# Values for rotational constant are from "Microwave Spectral tables: Diatomic molecules" by Lovas & Tiemann (1974).
+# Values for rotational constant are from "Microwave Spectral tables:
+# Diatomic molecules" by Lovas & Tiemann (1974).
 # Note that Brot differs from the one given by Ramsey by about 30 MHz.
 
 B_ϵ = 6.689873e9

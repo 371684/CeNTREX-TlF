@@ -1,5 +1,4 @@
 import numpy as np
-
 from centrex_TlF.states.generate_states import (
     generate_coupled_states_excited_B,
     generate_coupled_states_ground_X,

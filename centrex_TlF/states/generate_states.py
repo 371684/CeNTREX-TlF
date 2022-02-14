@@ -2,7 +2,6 @@ import copy
 from typing import Union
 
 import numpy as np
-
 from centrex_TlF.constants.constants import I_F, I_Tl
 from centrex_TlF.states.states import CoupledBasisState, UncoupledBasisState
 from centrex_TlF.states.utils import QuantumSelector, get_unique_basisstates, parity_X
@@ -75,7 +74,7 @@ def generate_coupled_states_base(qn_selector: QuantumSelector) -> np.ndarray:
     """generate CoupledBasisStates for the quantum numbers given by qn_selector
 
     Args:
-        qn_selector (QuantumSelector): quantum numbers to use to generate the 
+        qn_selector (QuantumSelector): quantum numbers to use to generate the
                                         CoupledBasisStates
 
     Returns:
@@ -140,12 +139,12 @@ def generate_coupled_states_base(qn_selector: QuantumSelector) -> np.ndarray:
 def generate_coupled_states_ground_X(
     qn_selector: Union[QuantumSelector, list, np.ndarray]
 ) -> np.ndarray:
-    """generate ground X state CoupledBasisStates for the quantum numbers given 
+    """generate ground X state CoupledBasisStates for the quantum numbers given
     by qn_selector
 
     Args:
         qn_selector (Union[QuantumSelector, list, np.ndarray]): QuantumSelector
-            or list/array of QuantumSelectors to use for generating the 
+            or list/array of QuantumSelectors to use for generating the
             CoupledBasisStates
 
     Returns:
@@ -175,12 +174,12 @@ def generate_coupled_states_ground_X(
 def generate_coupled_states_excited_B(
     qn_selector: Union[QuantumSelector, list, np.ndarray]
 ) -> np.ndarray:
-    """generate excited B state CoupledBasisStates for the quantum numbers given 
+    """generate excited B state CoupledBasisStates for the quantum numbers given
     by qn_selector
 
     Args:
         qn_selector (Union[QuantumSelector, list, np.ndarray]): QuantumSelector
-            or list/array of QuantumSelectors to use for generating the 
+            or list/array of QuantumSelectors to use for generating the
             CoupledBasisStates
 
     Returns:
@@ -222,11 +221,10 @@ def generate_coupled_states_excited(Js, Fs=None, F1s=None, Ps=None):
             ]
         )
     else:
-        assert None not in [
-            Fs,
-            F1s,
-            Ps,
-        ], "need to supply lists of F, F1 or P if one of them is used as an input parameter"
+        assert None not in [Fs, F1s, Ps], (
+            "need to supply lists of F, F1 or P"
+            "if one of them is used as an input parameter"
+        )
         QN = np.array(
             [
                 CoupledBasisState(

@@ -5,8 +5,6 @@ from pathlib import Path
 
 import numpy as np
 import scipy
-from sympy import Rational
-
 from centrex_TlF.hamiltonian import (
     generate_coupled_hamiltonian_B,
     generate_coupled_hamiltonian_B_function,
@@ -15,8 +13,10 @@ from centrex_TlF.hamiltonian import (
     generate_uncoupled_hamiltonian_X_function,
     matrix_to_states,
 )
-from centrex_TlF.states.generate_states import generate_coupled_states_excited_B
-from centrex_TlF.states.states import CoupledBasisState
+from centrex_TlF.states.states import (
+    CoupledBasisState,
+    generate_coupled_states_excited_B,
+)
 from centrex_TlF.states.utils import (
     BasisStates_from_State,
     QuantumSelector,
@@ -25,6 +25,7 @@ from centrex_TlF.states.utils import (
     find_states_idxs_from_states,
 )
 from centrex_TlF.transitions.utils import construct_ground_states_allowed
+from sympy import Rational
 
 __all__ = [
     "calculate_energies",

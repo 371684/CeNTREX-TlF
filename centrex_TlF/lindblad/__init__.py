@@ -11,8 +11,11 @@ from . import (
 from .generate_hamiltonian import *
 from .generate_julia_code import *
 from .generate_system_of_equations import *
-from .utils import *
-from .utils_decay import *
+
+from . import generate_julia_code
+from .generate_julia_code import *
+
+from . import utils_julia
 from .utils_julia import *
 from .utils_julia_progressbar import *
 from .utils_setup import *

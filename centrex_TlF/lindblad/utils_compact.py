@@ -1,8 +1,4 @@
-import copy
-
 import numpy as np
-
-from centrex_TlF.couplings.collapse import collapse_matrices
 
 __all__ = [""]
 
@@ -36,7 +32,7 @@ def compact_symbolic_hamiltonian_indices(hamiltonian, indices_compact):
     check_free_symbols = np.sum([len(val.free_symbols) for val in diagonal])
     assert (
         check_free_symbols == 0
-    ), f"diagonal elements for states to compact have symbols, cannot compact: {free_symbols}"
+    ), "diagonal elements for states to compact have symbols, cannot compact"
 
     # delete the rows and columns to compact, except a single one that's needed
     # to put the decays into

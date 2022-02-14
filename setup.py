@@ -3,11 +3,11 @@ import setuptools
 setuptools.setup(
     name="CeNTREX_TlF",
     author="Olivier Grasdijk",
-    author_email="olivier.grasdijk@yale.edu",
+    author_email="jgrasdijk@anl.gov",
     description="general utility package for TlF molecular calculations used in the CeNTREX experiment",
     url="https://github.com/",
     packages=setuptools.find_packages(),
-    install_requires=["numpy", "sympy>=1.9", "tqdm", "julia",],
+    install_requires=["numpy", "sympy>=1.9", "tqdm", "julia", "rich"],
     data_files=[
         (
             "centrex_TlF/pre_calculated",
@@ -23,5 +23,5 @@ setuptools.setup(
         ("centrex_TlF/lindblad", ["centrex_TlF/lindblad/julia_common.jl"]),
     ],
     python_requires=">=3.6",
-    version="0.1",
+    version="0.2",
 )

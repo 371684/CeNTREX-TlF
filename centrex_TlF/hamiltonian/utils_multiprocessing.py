@@ -1,5 +1,4 @@
 import numpy as np
-
 from centrex_TlF.hamiltonian.hamiltonian_B_terms_coupled import (
     H_LD,
     H_c_Tl,
