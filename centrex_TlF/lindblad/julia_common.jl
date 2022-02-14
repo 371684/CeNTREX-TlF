@@ -1,5 +1,5 @@
 using Distributed
-using Waveforms
+@everywhere using Waveforms
 
 @everywhere begin
     """
