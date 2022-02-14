@@ -1,8 +1,10 @@
 import copy
 import logging
+from dataclasses import dataclass
+
 import numpy as np
 import sympy as smp
-from dataclasses import dataclass
+
 from centrex_TlF.states import CoupledBasisState
 
 __all__ = ["DecayChannel"]

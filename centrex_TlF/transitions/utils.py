@@ -1,9 +1,10 @@
 import numpy as np
-from centrex_TlF.states.utils import QuantumSelector
+
 from centrex_TlF.states.generate_states import (
-    generate_coupled_states_ground_X,
     generate_coupled_states_excited_B,
+    generate_coupled_states_ground_X,
 )
+from centrex_TlF.states.utils import QuantumSelector
 
 __all__ = [
     "check_transition_coupled_allowed",
@@ -21,7 +22,7 @@ def construct_ground_states_allowed(Jg, Je, F1, F, mF=None, P=None, ΔmF=None):
         Je (int): rotational excited state
         F1 (float): excited F1 state
         F (int): excited F state
-        mF (int, optional): excited mF state. Defaults to None, which includes 
+        mF (int, optional): excited mF state. Defaults to None, which includes
                             all excited state mF.
         P (int, optional): excited state parity. Defaults to None, which picks
                             the allowed excited state parity given the ground
@@ -83,7 +84,7 @@ def check_transition_coupled_allowed(state1, state2, ΔmF_allowed, return_err=Tr
 
     errors = ""
     if flag_ΔP:
-        errors += f"parity invalid"
+        errors += "parity invalid"
     if flag_ΔF:
         if len(errors) != 0:
             errors += ", "
@@ -96,7 +97,7 @@ def check_transition_coupled_allowed(state1, state2, ΔmF_allowed, return_err=Tr
     if flag_ΔFΔmF:
         if len(errors) != 0:
             errors += ", "
-        errors += f"ΔF = 0 & ΔmF = 0 invalid"
+        errors += "ΔF = 0 & ΔmF = 0 invalid"
 
     if len(errors) != 0:
         errors = f"transition not allowed; {errors}"

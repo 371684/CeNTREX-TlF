@@ -1,15 +1,17 @@
-import numpy as np
-from sympy import Symbol
-import scipy.constants as cst
-from typing import Union
-from centrex_TlF.states import State
 from dataclasses import dataclass
-from scipy.sparse import kron, eye
+from typing import Union
+
+import numpy as np
+import scipy.constants as cst
+from scipy.sparse import eye, kron
+from sympy import Symbol
+
+from centrex_TlF.states import State
+from centrex_TlF.transitions.utils import check_transition_coupled_allowed
 from centrex_TlF.utils import (
     calculate_power_from_rabi_gaussian_beam,
     calculate_rabi_from_power_gaussian_beam,
 )
-from centrex_TlF.transitions.utils import check_transition_coupled_allowed
 
 __all__ = [
     "generate_total_hamiltonian",

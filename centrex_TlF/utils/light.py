@@ -39,7 +39,7 @@ def gaussian_2d(y, z, μy, μz, σy, σz):
         μz (float): mean of gaussian in z
         σy (float): standard deviation of gaussian in y
         σz (float): standard deviation of gaussian in y
-        
+
     Returns:
         (float): gaussian evaluated at y and z
     """
@@ -76,7 +76,7 @@ def gaussian_2d_amp(a, y, z, μy, μz, σy, σz):
         μz (float): mean of gaussian in z
         σy (float): standard deviation of gaussian in y
         σz (float): standard deviation of gaussian in y
-        
+
     Returns:
         (float): gaussian evaluated at y and z
     """
@@ -86,7 +86,7 @@ def gaussian_2d_amp(a, y, z, μy, μz, σy, σz):
 def multipass_prism_order(passes):
     """
     Generate the multipass prism pass order.
-    Passes in list are ordered by geometry (left-right or right-left), 
+    Passes in list are ordered by geometry (left-right or right-left),
     number indicate the pass number.
 
     Args:
@@ -114,7 +114,7 @@ def generate_1D_multipass(x, npasses, loss, σ, spacing):
         loss (float): loss per pass
         σ (float): laser 1-sigma width
         spacing (float): spacing between passes
-    
+
     Returns:
         (np.ndarray): 1D multipass for coordinates x
     """
@@ -156,7 +156,7 @@ def generate_2D_multipass(X, Y, npasses, loss, σx, σy, spacing):
 
 
 def calculate_intensity_from_power_gaussian_beam(power: float, σx: float, σy: float):
-    """Calculate the maximum laser intensity of a gaussian beam from the total 
+    """Calculate the maximum laser intensity of a gaussian beam from the total
     laser power given the beam parameters σx and σy
 
     Args:
@@ -171,7 +171,7 @@ def calculate_intensity_from_power_gaussian_beam(power: float, σx: float, σy: 
 
 
 def calculate_power_from_rabi_gaussian_beam(Ω, main_coupling, σx, σy, D=2.6675506e-30):
-    """calculate the required power for a given Ω, given a main transition 
+    """calculate the required power for a given Ω, given a main transition
     matrix element
 
     Args:
@@ -179,7 +179,7 @@ def calculate_power_from_rabi_gaussian_beam(Ω, main_coupling, σx, σy, D=2.667
         main_coupling (complex): main transition matrix element
         σx (float): σx of beam
         σy (float): σy of beam
-        D (float, optional): effective dipole moment for transitions. 
+        D (float, optional): effective dipole moment for transitions.
                             Defaults to 2.6675506e-30 for optical TlF.
 
     Returns:
@@ -189,10 +189,10 @@ def calculate_power_from_rabi_gaussian_beam(Ω, main_coupling, σx, σy, D=2.667
     E = Ω * cst.hbar / (main_coupling * D)
 
     # convert to peak intensity
-    I = 1 / 2 * cst.c * cst.epsilon_0 * E ** 2
+    intensity = 1 / 2 * cst.c * cst.epsilon_0 * E ** 2
 
     # convert power to amplitude of the gaussian
-    P = I * (2 * np.pi * σx * σy)
+    P = intensity * (2 * np.pi * σx * σy)
 
     return P
 
@@ -219,17 +219,17 @@ def calculate_rabi_from_power_gaussian_beam(
         main_coupling (complex): main transition matrix element
         σx (float): σx of beam
         σy (float): σy of beam
-        D ([type], optional): effective dipole moment for transitions. 
+        D ([type], optional): effective dipole moment for transitions.
                                 Defaults to 2.6675506e-30 for optical TlF.
         Γ (float, optional): Γ to normalize Rabi rate with
     Returns:
         float: power [W]
     """
     # intensity from power
-    I = P / (2 * np.pi * σx * σy)
+    intensity = P / (2 * np.pi * σx * σy)
 
     # electric field from intensity
-    E = np.sqrt(I * 2 / (cst.c * cst.epsilon_0))
+    E = np.sqrt(intensity * 2 / (cst.c * cst.epsilon_0))
 
     # rabi rate from electric field
     Ω = (E * main_coupling * D) / cst.hbar
@@ -251,7 +251,7 @@ def calculate_power_from_rabi_gaussian_beam_microwave(
         main_coupling (complex): main transition matrix element
         σx (float): σx of beam
         σy (float): σy of beam
-        D ([type], optional): effective dipole moment for transitions. 
+        D ([type], optional): effective dipole moment for transitions.
                                 Defaults to 1.4103753e-29 for microwave TlF.
         Γ (float, optional): Γ to normalize Rabi rate with
     Returns:
@@ -270,7 +270,7 @@ def calculate_rabi_from_power_gaussian_beam_microwave(
         main_coupling (complex): main transition matrix element
         σx (float): σx of beam
         σy (float): σy of beam
-        D ([type], optional): effective dipole moment for transitions. 
+        D ([type], optional): effective dipole moment for transitions.
                                 Defaults to 1.4103753e-29 for microwave TlF.
         Γ (float, optional): Γ to normalize Rabi rate with
     Returns:

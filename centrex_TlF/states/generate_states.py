@@ -1,9 +1,11 @@
 import copy
-import numpy as np
 from typing import Union
-from centrex_TlF.constants.constants import I_Tl, I_F
+
+import numpy as np
+
+from centrex_TlF.constants.constants import I_F, I_Tl
+from centrex_TlF.states.states import CoupledBasisState, UncoupledBasisState
 from centrex_TlF.states.utils import QuantumSelector, get_unique_basisstates, parity_X
-from centrex_TlF.states.states import UncoupledBasisState, CoupledBasisState
 
 __all__ = [
     "generate_uncoupled_states_ground",

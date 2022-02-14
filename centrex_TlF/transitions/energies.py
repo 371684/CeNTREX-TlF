@@ -1,37 +1,39 @@
 import json
-import scipy
 import pickle
-import numpy as np
+from functools import lru_cache
 from pathlib import Path
+
+import numpy as np
+import scipy
 from sympy import Rational
-from centrex_TlF.states.states import CoupledBasisState
-from centrex_TlF.states.generate_states import (
-    generate_coupled_states_excited_B
-)
-from centrex_TlF.states.utils import (
-    BasisStates_from_State,
-    QuantumSelector,
-    find_state_idx_from_state,
-    find_states_idxs_from_states,
-    find_closest_vector_idx,
-)
+
 from centrex_TlF.hamiltonian import (
-    generate_uncoupled_hamiltonian_X,
-    generate_uncoupled_hamiltonian_X_function,
     generate_coupled_hamiltonian_B,
     generate_coupled_hamiltonian_B_function,
     generate_diagonalized_hamiltonian,
+    generate_uncoupled_hamiltonian_X,
+    generate_uncoupled_hamiltonian_X_function,
     matrix_to_states,
 )
-from centrex_TlF.transitions.utils import (
-    construct_ground_states_allowed
+from centrex_TlF.states.generate_states import generate_coupled_states_excited_B
+from centrex_TlF.states.states import CoupledBasisState
+from centrex_TlF.states.utils import (
+    BasisStates_from_State,
+    QuantumSelector,
+    find_closest_vector_idx,
+    find_state_idx_from_state,
+    find_states_idxs_from_states,
 )
-from functools import lru_cache
+from centrex_TlF.transitions.utils import construct_ground_states_allowed
 
 __all__ = [
-    'calculate_energies', 'calculate_transition_frequency', 
-    'generate_transition_frequency', 'generate_transition_frequencies',
-    'find_transition', 'identify_transition', 'LaserTransition'
+    "calculate_energies",
+    "calculate_transition_frequency",
+    "generate_transition_frequency",
+    "generate_transition_frequencies",
+    "find_transition",
+    "identify_transition",
+    "LaserTransition",
 ]
 
 
@@ -107,10 +109,12 @@ def calculate_transition_frequency(state1, state2, H, QN):
     maximum overlap for state1 and state2 and calculate frequency between those.
 
     inputs:
-    state1      : State object or state vector (np.ndarray) representing the first state of interest
-    state2      : State object or state vector (np.ndarray) representing the second state of interest
+    state1      : State object or state vector (np.ndarray) representing the first state
+                    of interest
+    state2      : State object or state vector (np.ndarray) representing the second
+                    state of interest
     H           : Hamiltonian that is used to calculate the energies of states 1 and 2
-                  (assumed to be in angular frequency units - 2pi*Hz)
+                    (assumed to be in angular frequency units - 2pi*Hz)
     QN          : List of State objects that defines the basis for the Hamiltonian
 
     returns:
@@ -170,7 +174,6 @@ def generate_transition_frequency(state1, state2):
         frequency: transition frequency in 2π⋅Hz
     """
     path = Path(__file__).parent.parent / "pre_calculated"
-    js = path / "precalculated.json"
 
     # check if state1 and state2 are included in the pre-cached transitions
     _check_precached(state1)
@@ -184,8 +187,7 @@ def generate_transition_frequency(state1, state2):
 
 
 def generate_transition_frequencies(states1, states2):
-    """Get the field free transition frequencies between states1 and states2 in 
-    2π⋅Hz.
+    """Get the field free transition frequencies between states1 and states2 in 2π⋅Hz.
     Grabs pre-cached version, otherwise throws exception.
 
     Args:
@@ -196,7 +198,6 @@ def generate_transition_frequencies(states1, states2):
         frequency: transition frequency in 2π⋅Hz
     """
     path = Path(__file__).parent.parent / "pre_calculated"
-    js = path / "precalculated.json"
 
     # check if states1 and states2 are included in the pre-cached transitions
     for state1, state2 in zip(states1, states2):
@@ -265,52 +266,64 @@ def identify_transition(state1, state2):
     string = f"{transition}({Jg}) F1'={Rational(state2.F1)}, F'={Rational(state2.F)}"
     return string
 
-class LaserTransition:    
-    transitions_nom = {0: 'Q', +1: 'R', -1: 'P', +2: 'S', -2: 'O', +3: 'T'}
-    transitions_ΔJ = {'R': +1, 'P': -1, 'Q': 0, 'S': +2, 'O': -2, 'T': +3}
-    
-    def __init__(self, transition, F1, F, eg = 'X', ee = 'B', ΔmF = None):
-        transition,Jg = transition
+
+class LaserTransition:
+    transitions_nom = {0: "Q", +1: "R", -1: "P", +2: "S", -2: "O", +3: "T"}
+    transitions_ΔJ = {"R": +1, "P": -1, "Q": 0, "S": +2, "O": -2, "T": +3}
+
+    def __init__(self, transition, F1, F, eg="X", ee="B", ΔmF=None):
+        transition, Jg = transition
         Jg = int(Jg)
         self.transition = transition
         self.Jg = Jg
-        self.Je = self.Jg+self.transitions_ΔJ[transition]
+        self.Je = self.Jg + self.transitions_ΔJ[transition]
         self.F1 = F1
         self.F = F
         self.ΔmF = ΔmF
 
-
-        self.ground_main = 1*CoupledBasisState(
-                                J=self.Jg, F1 = self.Jg+1/2, F = self.Jg, mF = 0, 
-                                I1 = 1/2, I2 = 1/2, P = (-1)**self.Jg, Omega = 0, 
-                                electronic_state = eg
-                                )
-        self.excited_main = 1*CoupledBasisState(
-                                J=self.Je, F1 = F1, F = F, mF = 0, I1 = 1/2,
-                                I2 = 1/2, P = (-1)**(self.Jg+1), Omega = 1, 
-                                electronic_state = ee
-                                )
-        self.ground_selector = QuantumSelector(J=self.Jg, electronic = eg,
-                                                P = (-1)**self.Jg)
+        self.ground_main = 1 * CoupledBasisState(
+            J=self.Jg,
+            F1=self.Jg + 1 / 2,
+            F=self.Jg,
+            mF=0,
+            I1=1 / 2,
+            I2=1 / 2,
+            P=(-1) ** self.Jg,
+            Omega=0,
+            electronic_state=eg,
+        )
+        self.excited_main = 1 * CoupledBasisState(
+            J=self.Je,
+            F1=F1,
+            F=F,
+            mF=0,
+            I1=1 / 2,
+            I2=1 / 2,
+            P=(-1) ** (self.Jg + 1),
+            Omega=1,
+            electronic_state=ee,
+        )
+        self.ground_selector = QuantumSelector(
+            J=self.Jg, electronic=eg, P=(-1) ** self.Jg
+        )
         self.excited_selector = QuantumSelector(
-                                    J=self.Je, F1 = self.F1, F = self.F,
-                                    electronic = ee, P = (-1)**(self.Jg+1)
-                                )
+            J=self.Je, F1=self.F1, F=self.F, electronic=ee, P=(-1) ** (self.Jg + 1)
+        )
         self.ground_states = construct_ground_states_allowed(
-                                self.Jg, self.Je, F1, F, ΔmF = ΔmF
-                            )
-        self.excited_states = generate_coupled_states_excited_B(
-                                self.excited_selector
-                            )
+            self.Jg, self.Je, F1, F, ΔmF=ΔmF
+        )
+        self.excited_states = generate_coupled_states_excited_B(self.excited_selector)
 
         self.n_ground = len(self.ground_states)
         self.n_excited = len(self.excited_states)
         self.frequency = generate_transition_frequency(
-                            self.ground_main, self.excited_main
-                        )
+            self.ground_main, self.excited_main
+        )
 
     def __repr__(self):
-        string = \
-            f"{self.transition}({self.Jg}) F1'={Rational(self.F1)}, F'={Rational(self.F)}"
+        string = (
+            f"{self.transition}({self.Jg}) F1'={Rational(self.F1)}, "
+            f"F'={Rational(self.F)}"
+        )
         # string += f' -> {self.frequency/(2*np.pi*1e9):.2f} GHz'
         return f"Transition({string})"

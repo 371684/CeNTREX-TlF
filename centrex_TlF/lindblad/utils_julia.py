@@ -1,7 +1,8 @@
+from pathlib import Path
+
 import numpy as np
 import sympy as smp
 from julia import Main
-from pathlib import Path
 from sympy import Symbol
 from sympy.utilities.lambdify import lambdify
 

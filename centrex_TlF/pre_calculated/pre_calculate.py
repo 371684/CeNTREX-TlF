@@ -1,10 +1,12 @@
-import json
 import copy
+import json
 import pickle
 import sqlite3
+from pathlib import Path
+
 import numpy as np
 from tqdm import tqdm
-from pathlib import Path
+
 import centrex_TlF as centrex
 
 
@@ -21,11 +23,15 @@ def create_coupled_hamiltonian_B_sqlite(con):
             "HZz",
         ]:
             table = table.strip()
-            string = f"""CREATE TABLE {table} (J₁ int, F1₁ real, F₁ int, mF₁ int, I1₁ real, I2₁ real, P₁ int, J₂ int, F1₂ real, F₂ int, mF₂ int, I1₂ real, I2₂ real, P₂ int, value_real real, value_imag real, 
-                            unique (J₁, F1₁, F₁, mF₁, I1₁, I2₁, P₁, J₂, F1₂, F₂, mF₂, I1₂, I2₂, P₂))"""
+            string = (
+                f"CREATE TABLE {table} (J₁ int, F1₁ real, F₁ int, mF₁ int, I1₁ real"
+                ", I2₁ real, P₁ int, J₂ int, F1₂ real, F₂ int, mF₂ int, I1₂ real, I2₂ "
+                " real, P₂ int, value_real real, value_imag real, unique (J₁, F1₁, "
+                "F₁, mF₁, I1₁, I2₁, P₁, J₂, F1₂, F₂, mF₂, I1₂, I2₂, P₂))"
+            )
             cur.execute(string)
             con.commit()
-    except Exception as e:
+    except Exception:
         pass
     return
 
@@ -58,7 +64,11 @@ def generate_coupled_hamiltonian_B_sqlite(QN, con, progress=False):
                     )
                     if val != 0:
                         try:
-                            string = f"{a.J}, {a.F1}, {a.F}, {a.mF}, {a.I1}, {a.I2}, {a.P}, {b.J}, {b.F1}, {b.F}, {b.mF}, {b.I1}, {b.I2}, {b.P}, {val.real}, {val.imag}"
+                            string = (
+                                f"{a.J}, {a.F1}, {a.F}, {a.mF}, {a.I1}, {a.I2}, {a.P}, "
+                                f"{b.J}, {b.F1}, {b.F}, {b.mF}, {b.I1}, {b.I2}, {b.P}, "
+                                f"{val.real}, {val.imag}"
+                            )
                             cmd = f"INSERT INTO {table} VALUES ({string})"
                             cur.execute(cmd)
                         except Exception as e:
@@ -73,8 +83,12 @@ def create_uncoupled_hamiltonian_X_sqlite(con):
         for table in "Hff, HSx, HSy, HSz, HZx, HZy, HZz".split(","):
             table = table.strip()
             cur.execute(
-                f"""CREATE TABLE {table} (J₁ int, mJ₁ int, I1₁ real, m1₁ real, I2₁ real, m2₁ real, J₂ int, mJ₂ int, I1₂ real, m1₂ real, I2₂ real, m2₂ real, value_real real, value_imag real, 
-                            unique (J₁, mJ₁, I1₁, m1₁, I2₁, m2₁, J₂, mJ₂, I1₂, m1₂, I2₂, m2₂))"""
+                (
+                    f"CREATE TABLE {table} (J₁ int, mJ₁ int, I1₁ real, m1₁ real, I2₁ "
+                    "real, m2₁ real, J₂ int, mJ₂ int, I1₂ real, m1₂ real, I2₂ real, "
+                    "m2₂ real, value_real real, value_imag real, unique (J₁, mJ₁, I1₁, "
+                    " m1₁, I2₁, m2₁, J₂, mJ₂, I1₂, m1₂, I2₂, m2₂))"
+                )
             )
             con.commit()
     except:
@@ -104,7 +118,7 @@ def generate_uncoupled_hamiltonian_X_sqlite(QN, con, progress=False):
                         string = f"{a.J}, {a.mJ}, {a.I1}, {a.m1}, {a.I2}, {a.m2}, {b.J}, {b.mJ}, {b.I1}, {b.m1}, {b.I2}, {b.m2}, {val.real}, {val.imag}"
                         cmd = f"INSERT INTO {table} VALUES ({string})"
                         cur.execute(cmd)
-                    except Exception as e:
+                    except Exception:
                         pass
         con.commit()
 
@@ -132,11 +146,14 @@ def generate_transformation_uncoupled_to_coupled(QN, QNc, con, progress=False):
                 val = a @ b
                 if val != 0:
                     try:
-                        string = f"{a.J}, {a.mJ}, {a.I1}, {a.m1}, {a.I2}, {a.m2}, {b.J}, {b.F1}, {b.F}, {b.mF}, {b.I1}, {b.I2}, {val.real}, {val.imag}"
+                        string = (
+                            f"{a.J}, {a.mJ}, {a.I1}, {a.m1}, {a.I2}, {a.m2}, {b.J}, "
+                            f"{b.F1}, {b.F}, {b.mF}, {b.I1}, {b.I2}, {val.real}, "
+                            f"{val.imag}"
+                        )
                         cmd = f"INSERT INTO uncoupled_to_coupled VALUES ({string})"
                         cur.execute(cmd)
-                    except Exception as e:
-                        #                         raise e
+                    except Exception:
                         pass
         con.commit()
     return
@@ -151,7 +168,7 @@ def create_ED_ME(con):
                             unique (J₁, F1₁, F₁, mF₁, I1₁, I2₁, Ω₁, state₁, J₂, F1₂, F₂, mF₂, I1₂, I2₂, Ω₂, state₂, Px, Py, Pz))"""
             cur.execute(string)
             con.commit()
-    except Exception as e:
+    except Exception:
         pass
 
     try:
@@ -161,7 +178,7 @@ def create_ED_ME(con):
                             unique (J₁, F1₁, F₁, mF₁, I1₁, I2₁, Ω₁, state₁, J₂, F1₂, F₂, mF₂, I1₂, I2₂, Ω₂, state₂))"""
             cur.execute(string)
             con.commit()
-    except Exception as e:
+    except Exception:
         pass
     return
 
@@ -184,7 +201,7 @@ def generate_ED_ME(QN, pol_vecs, con, progress=False):
                                 string = f"{a.J}, {a.F1}, {a.F}, {a.mF}, {a.I1}, {a.I2}, {a.Omega}, '{a.electronic_state}', {b.J}, {b.F1}, {b.F}, {b.mF}, {b.I1}, {b.I2}, {b.Omega}, '{b.electronic_state}', {int(pol_vec[0])}, {int(pol_vec[1])}, {int(pol_vec[2])}, {val.real}, {val.imag}"
                                 cmd = f"INSERT INTO {table} VALUES ({string})"
                                 cur.execute(cmd)
-                            except Exception as e:
+                            except Exception:
                                 pass
                 con.commit()
     with con:
@@ -203,7 +220,7 @@ def generate_ED_ME(QN, pol_vecs, con, progress=False):
                             string = f"{a.J}, {a.F1}, {a.F}, {a.mF}, {a.I1}, {a.I2}, {a.Omega}, '{a.electronic_state}', {b.J}, {b.F1}, {b.F}, {b.mF}, {b.I1}, {b.I2}, {b.Omega}, '{b.electronic_state}', {val.real}, {val.imag}"
                             cmd = f"INSERT INTO {table} VALUES ({string})"
                             cur.execute(cmd)
-                        except Exception as e:
+                        except Exception:
                             pass
             con.commit()
     return
@@ -229,63 +246,65 @@ def generate_pre_calculated(nprocs, db_path=None):
     if not db_path:
         db_path = path
 
-    # db = 'uncoupled_hamiltonian_X'
-    # Js = config[db]
-    # print(f"pre-calculating {db} for J = {Js}")
-    # try:
-    #     (db_path / (db + '.db')).unlink()
-    # except:
-    #     pass
-    # con = sqlite3.connect(db_path / (db + '.db'))
-    # create_uncoupled_hamiltonian_X_sqlite(con)
-    # QN = centrex.states.generate_uncoupled_states_ground(Js)
-    # generate_uncoupled_hamiltonian_X_sqlite(QN, con, progress = True)
+    db = "uncoupled_hamiltonian_X"
+    Js = config[db]
+    print(f"pre-calculating {db} for J = {Js}")
+    try:
+        (db_path / (db + ".db")).unlink()
+    except Exception:
+        pass
+    con = sqlite3.connect(db_path / (db + ".db"))
+    create_uncoupled_hamiltonian_X_sqlite(con)
+    QN = centrex.states.generate_uncoupled_states_ground(Js)
+    generate_uncoupled_hamiltonian_X_sqlite(QN, con, progress=True)
 
-    # db = 'coupled_hamiltonian_B'
-    # Js = config[db]
-    # print(f"pre-calculating {db} for J = {Js}")
-    # try:
-    #     (db_path / (db + '.db')).unlink()
-    # except:
-    #     pass
-    # con = sqlite3.connect(db_path / (db + '.db'))
-    # create_coupled_hamiltonian_B_sqlite(con)
-    # QN = centrex.states.generate_coupled_states_excited(Js, Ps = [-1,1])
-    # generate_coupled_hamiltonian_B_sqlite(QN, con, progress = True)
+    db = "coupled_hamiltonian_B"
+    Js = config[db]
+    print(f"pre-calculating {db} for J = {Js}")
+    try:
+        (db_path / (db + ".db")).unlink()
+    except Exception:
+        pass
+    con = sqlite3.connect(db_path / (db + ".db"))
+    create_coupled_hamiltonian_B_sqlite(con)
+    QN = centrex.states.generate_coupled_states_excited(Js, Ps=[-1, 1])
+    generate_coupled_hamiltonian_B_sqlite(QN, con, progress=True)
 
-    # db = 'matrix_elements'
-    # Jg = config[db]['X']
-    # Je = config[db]['B']
-    # QN = list(np.append(
-    #     centrex.states.generate_coupled_states_ground(Jg),
-    #     centrex.states.generate_coupled_states_excited(Je, Ps = [+1])
-    # ))
-    # QN_B = centrex.states.generate_coupled_states_excited(Je, Ps = [+1])
-    # for idx in range(len(QN_B)):
-    #     QN_B[idx].Omega *= -1
-    # QN.extend(QN_B)
-    # pol_vecs = config[db]['pol_vec']
-    # print(f"pre-calculating {db} for Jg = {Jg} and Je = {Je}")
-    # try:
-    #     (db_path / (db + '.db')).unlink()
-    # except:
-    #     pass
-    # con = sqlite3.connect(db_path / (db + '.db'))
-    # create_ED_ME(con)
-    # generate_ED_ME(QN, pol_vecs, con, progress = True)
+    db = "matrix_elements"
+    Jg = config[db]["X"]
+    Je = config[db]["B"]
+    QN = list(
+        np.append(
+            centrex.states.generate_coupled_states_ground(Jg),
+            centrex.states.generate_coupled_states_excited(Je, Ps=[+1]),
+        )
+    )
+    QN_B = centrex.states.generate_coupled_states_excited(Je, Ps=[+1])
+    for idx in range(len(QN_B)):
+        QN_B[idx].Omega *= -1
+    QN.extend(QN_B)
+    pol_vecs = config[db]["pol_vec"]
+    print(f"pre-calculating {db} for Jg = {Jg} and Je = {Je}")
+    try:
+        (db_path / (db + ".db")).unlink()
+    except Exception:
+        pass
+    con = sqlite3.connect(db_path / (db + ".db"))
+    create_ED_ME(con)
+    generate_ED_ME(QN, pol_vecs, con, progress=True)
 
-    # db = 'transformation'
-    # Js = config[db]
-    # print(f"pre-calculating {db} for J = {Js}")
-    # try:
-    #     (db_path / (db + '.db')).unlink()
-    # except:
-    #     pass
-    # con = sqlite3.connect(db_path / (db + '.db'))
-    # create_transformation_uncoupled_to_coupled(con)
-    # QN = centrex.states.generate_uncoupled_states_ground(Js)
-    # QNc = centrex.states.generate_coupled_states_ground(Js)
-    # generate_transformation_uncoupled_to_coupled(QN, QNc, con, progress = True)
+    db = "transformation"
+    Js = config[db]
+    print(f"pre-calculating {db} for J = {Js}")
+    try:
+        (db_path / (db + ".db")).unlink()
+    except Exception:
+        pass
+    con = sqlite3.connect(db_path / (db + ".db"))
+    create_transformation_uncoupled_to_coupled(con)
+    QN = centrex.states.generate_uncoupled_states_ground(Js)
+    QNc = centrex.states.generate_coupled_states_ground(Js)
+    generate_transformation_uncoupled_to_coupled(QN, QNc, con, progress=True)
 
     db = "transitions"
     JX = config[db]["X"]

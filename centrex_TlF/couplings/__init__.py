@@ -1,16 +1,8 @@
-from . import collapse
-from .collapse import *
-
-from . import branching
+from . import branching, collapse, coupling_matrix, matrix_elements, utils
 from .branching import *
-
-from . import coupling_matrix
+from .collapse import *
 from .coupling_matrix import *
-
-from . import utils
 from .utils import *
-
-from . import matrix_elements
 
 __all__ = collapse.__all__.copy()
 __all__ += branching.__all__.copy()

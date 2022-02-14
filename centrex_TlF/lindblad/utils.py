@@ -1,4 +1,4 @@
-from sympy import zeros, Symbol
+from sympy import Symbol, zeros
 
 __all__ = ["generate_density_matrix_symbolic"]
 

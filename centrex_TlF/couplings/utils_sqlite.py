@@ -1,6 +1,7 @@
 import json
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 
 
 def retrieve_ED_ME_coupled_sqlite_single_rme(a, b, pol_vec, con):

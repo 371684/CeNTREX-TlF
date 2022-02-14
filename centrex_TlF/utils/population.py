@@ -1,8 +1,8 @@
-from numpy.core.numeric import indices
-from centrex_TlF.states.utils import QuantumSelector
 import numpy as np
 import scipy.constants as cst
+
 from centrex_TlF.couplings.utils_compact import delete_row_column
+from centrex_TlF.states.utils import QuantumSelector
 
 __all__ = [
     "thermal_population",
@@ -21,17 +21,16 @@ def thermal_population(J, T, B=6.66733e9, n=100):
         J (int): rotational level
         T (float): temperature [Kelvin]
         B (float, optional): rotational constant. Defaults to 6.66733e9.
-        n (int, optional): number of rotational levels to normalize with. 
+        n (int, optional): number of rotational levels to normalize with.
                             Defaults to 100.
 
     Returns:
         float: relative population in a rotational sublevel
     """
     c = 2 * np.pi * cst.hbar * B / (cst.k * T)
-    g = lambda J: 4 * (2 * J + 1)
     a = lambda J: -c * J * (J + 1)
-    Z = np.sum([g(i) * np.exp(a(i)) for i in range(n)])
-    return g(J) * np.exp(a(J)) / Z
+    Z = np.sum([J_levels(i) * np.exp(a(i)) for i in range(n)])
+    return J_levels(J) * np.exp(a(J)) / Z
 
 
 def J_levels(J):
@@ -56,7 +55,7 @@ def J_slice(J):
         numpy slice: numpy slice object
     """
     if J == 0:
-        return np.s_[0 : J_levels(0)]
+        return np.s_[: J_levels(0)]
     else:
         levels = J_levels(np.arange(J + 1))
         return np.s_[np.sum(levels[:-1]) : np.sum(levels)]
@@ -81,10 +80,10 @@ def generate_thermal_J(Js, n_excited, T, normalized=True, slice_compact=None):
     index = 0
     for J in Js:
         p = thermal_population(J, T)
-        l = J_levels(J)
-        sl = np.s_[index : index + l]
-        np.fill_diagonal(ρ[sl, sl], p / l)
-        index += l
+        levels = J_levels(J)
+        sl = np.s_[index : index + levels]
+        np.fill_diagonal(ρ[sl, sl], p / levels)
+        index += levels
 
     if normalized:
         # normalize the density matrix trace to 1
@@ -101,11 +100,11 @@ def generate_thermal_J(Js, n_excited, T, normalized=True, slice_compact=None):
 
 
 def generate_thermal_population_states(states_to_fill, states, T):
-    """Generate a thermal distrubtion over the states specified in 
+    """Generate a thermal distrubtion over the states specified in
     states_to_fill, a QuantumSelector or list of Quantumselectors
 
     Args:
-        states_to_fill (QuantumSelector): Quantumselector specifying states to 
+        states_to_fill (QuantumSelector): Quantumselector specifying states to
         fill
         states (list, np.ndarray): all states used in simulation
         T (float): temperature in Kelvin
@@ -157,7 +156,7 @@ def generate_thermal_population_states(states_to_fill, states, T):
 
 
 def generate_population_states(states, levels):
-    """generate a uniform population distribution with population in the 
+    """generate a uniform population distribution with population in the
     specified states
 
     Args:

@@ -1,7 +1,5 @@
-from . import energies
+from . import energies, utils
 from .energies import *
-
-from . import utils
 from .utils import *
 
 __all__ = energies.__all__.copy()

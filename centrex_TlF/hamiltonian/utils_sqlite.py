@@ -1,7 +1,8 @@
 import json
 import sqlite3
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 
 
 def retrieve_uncoupled_hamiltonian_X_sqlite(QN, db):
