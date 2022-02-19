@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import scipy
+import scipy.linalg
 from centrex_TlF.hamiltonian import (
     generate_coupled_hamiltonian_B,
     generate_coupled_hamiltonian_B_function,

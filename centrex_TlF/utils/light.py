@@ -1,3 +1,5 @@
+from typing import Optional, List
+
 import numpy as np
 import scipy.constants as cst
 
@@ -13,7 +15,7 @@ __all__ = [
 ]
 
 
-def gaussian(x, μ, σ):
+def gaussian(x: float, μ: float, σ: float) -> float:
     """
     Non-normalized gaussian function
 
@@ -28,7 +30,9 @@ def gaussian(x, μ, σ):
     return np.exp(-((x - μ) ** 2) / (2 * σ ** 2))
 
 
-def gaussian_2d(y, z, μy, μz, σy, σz):
+def gaussian_2d(
+    y: float, z: float, μy: float, μz: float, σy: float, σz: float
+) -> float:
     """
     Non-normalized 2D gaussian function
 
@@ -48,7 +52,7 @@ def gaussian_2d(y, z, μy, μz, σy, σz):
     return np.exp(-(a + b))
 
 
-def gaussian_amp(x, a, μ, σ):
+def gaussian_amp(x: float, a: float, μ: float, σ: float) -> float:
     """
     Non-normalized gaussian function with amplitude a
 
@@ -64,7 +68,9 @@ def gaussian_amp(x, a, μ, σ):
     return a * np.exp(-((x - μ) ** 2) / (2 * σ ** 2))
 
 
-def gaussian_2d_amp(a, y, z, μy, μz, σy, σz):
+def gaussian_2d_amp(
+    a: float, y: float, z: float, μy: float, μz: float, σy: float, σz: float
+) -> float:
     """
     Non-normalized 2D gaussian function with amplitude a
 
@@ -83,7 +89,7 @@ def gaussian_2d_amp(a, y, z, μy, μz, σy, σz):
     return a * gaussian_2d(y, z, μy, μz, σy, σz)
 
 
-def multipass_prism_order(passes):
+def multipass_prism_order(passes: int) -> List:
     """
     Generate the multipass prism pass order.
     Passes in list are ordered by geometry (left-right or right-left),
@@ -104,7 +110,9 @@ def multipass_prism_order(passes):
     return npass
 
 
-def generate_1D_multipass(x, npasses, loss, σ, spacing):
+def generate_1D_multipass(
+    x: np.ndarray, npasses: int, loss: float, σ: float, spacing: float
+) -> np.ndarray:
     """
     Generate a 1D multipass for coordinates x
 
@@ -127,7 +135,15 @@ def generate_1D_multipass(x, npasses, loss, σ, spacing):
     return multipass
 
 
-def generate_2D_multipass(X, Y, npasses, loss, σx, σy, spacing):
+def generate_2D_multipass(
+    X: np.ndarray,
+    Y: np.ndarray,
+    npasses: int,
+    loss: float,
+    σx: float,
+    σy: float,
+    spacing: float,
+) -> np.ndarray:
     """
     Generate a 2D multipass for coordinates X and Y.
 
@@ -170,7 +186,9 @@ def calculate_intensity_from_power_gaussian_beam(power: float, σx: float, σy: 
     return power / (2 * np.pi * σx * σy)
 
 
-def calculate_power_from_rabi_gaussian_beam(Ω, main_coupling, σx, σy, D=2.6675506e-30):
+def calculate_power_from_rabi_gaussian_beam(
+    Ω: float, main_coupling: float, σx: float, σy: float, D: float = 2.6675506e-30
+) -> float:
     """calculate the required power for a given Ω, given a main transition
     matrix element
 
@@ -197,7 +215,7 @@ def calculate_power_from_rabi_gaussian_beam(Ω, main_coupling, σx, σy, D=2.667
     return P
 
 
-def intensity_to_electric_field(intensity):
+def intensity_to_electric_field(intensity: float) -> float:
     """Convert intensity in W/m^2 to the electric field
 
     Args:
@@ -210,8 +228,13 @@ def intensity_to_electric_field(intensity):
 
 
 def calculate_rabi_from_power_gaussian_beam(
-    P, main_coupling, σx, σy, D=2.6675506e-30, Γ=None
-):
+    P: float,
+    main_coupling: float,
+    σx: float,
+    σy: float,
+    D: float = 2.6675506e-30,
+    Γ: Optional[float] = None,
+) -> float:
     """calculate Ω for a given power, given a main transition matrix element
 
     Args:
@@ -242,8 +265,8 @@ def calculate_rabi_from_power_gaussian_beam(
 
 
 def calculate_power_from_rabi_gaussian_beam_microwave(
-    Ω, main_coupling, σx, σy, D=1.4103753e-29
-):
+    Ω: float, main_coupling: float, σx: float, σy: float, D: float = 1.4103753e-29
+) -> float:
     """Calculate the microwave Ω for a given power, given a main transition matrix element
 
     Args:
@@ -261,8 +284,13 @@ def calculate_power_from_rabi_gaussian_beam_microwave(
 
 
 def calculate_rabi_from_power_gaussian_beam_microwave(
-    P, main_coupling, σx, σy, D=1.4103753e-29, Γ=None
-):
+    P: float,
+    main_coupling: float,
+    σx: float,
+    σy: float,
+    D: float = 1.4103753e-29,
+    Γ: Optional[float] = None,
+) -> float:
     """Calculate the microwave Ω for a given power, given a main transition matrix element
 
     Args:

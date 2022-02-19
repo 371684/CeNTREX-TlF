@@ -13,7 +13,7 @@ __all__ = [
 ]
 
 
-def thermal_population(J, T, B=6.66733e9, n=100):
+def thermal_population(J: int, T: float, B: float = 6.66733e9, n: int = 100) -> float:
     """calculate the thermal population of a given J sublevel
 
     Args:
@@ -35,7 +35,7 @@ def thermal_population(J, T, B=6.66733e9, n=100):
     return J_levels(J) * np.exp(a(J)) / Z
 
 
-def J_levels(J):
+def J_levels(J: int) -> int:
     """calculate the number of hyperfine sublevels per J rotational level
 
     Args:

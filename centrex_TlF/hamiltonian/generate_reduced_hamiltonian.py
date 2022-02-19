@@ -2,6 +2,7 @@ import centrex_TlF
 import centrex_TlF.states as states
 import numpy as np
 import scipy
+import scipy.linalg
 from centrex_TlF.hamiltonian.basis_transform import generate_transform_matrix
 from centrex_TlF.hamiltonian.generate_hamiltonian import (
     generate_coupled_hamiltonian_B,
