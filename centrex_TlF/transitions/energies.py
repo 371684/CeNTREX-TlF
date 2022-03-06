@@ -14,10 +14,8 @@ from centrex_TlF.hamiltonian import (
     generate_uncoupled_hamiltonian_X_function,
     matrix_to_states,
 )
-from centrex_TlF.states.states import (
-    CoupledBasisState,
-    generate_coupled_states_excited_B,
-)
+from centrex_TlF.states.states import CoupledBasisState
+from centrex_TlF.states.generate_states import generate_coupled_states_excited_B
 from centrex_TlF.states.utils import (
     BasisStates_from_State,
     QuantumSelector,
@@ -323,9 +321,16 @@ class LaserTransition:
         )
 
     def __repr__(self):
+        return f"Transition({self.get_string()})"
+
+    def get_string(self):
         string = (
             f"{self.transition}({self.Jg}) F1'={Rational(self.F1)}, "
             f"F'={Rational(self.F)}"
         )
-        # string += f' -> {self.frequency/(2*np.pi*1e9):.2f} GHz'
-        return f"Transition({string})"
+        return string
+
+    def get_string_os(self):
+        string = self.get_string()
+        string = string.replace("/", "_").replace(",", "")
+        return string
