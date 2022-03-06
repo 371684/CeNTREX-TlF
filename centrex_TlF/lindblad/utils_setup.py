@@ -241,6 +241,8 @@ def setup_OBE_system_julia(
         full_output (bool, optional): Returns all matrices, states etc. if True,
                                         Returns only QN if False.
                                         Defaults to False.
+        decay_channels (DecayChannel): dataclass specifying the decay channel to
+                                        add
         verbose (bool, optional): Log progress to INFO. Defaults to False.
 
     Returns:
