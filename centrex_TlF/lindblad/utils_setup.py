@@ -93,10 +93,8 @@ def generate_OBE_system(
         H_int,
         V_ref_int,
     ) = generate_total_reduced_hamiltonian(
-        ground_states_approx=generate_coupled_states_ground_X(system_parameters.ground),
-        excited_states_approx=generate_coupled_states_excited_B(
-            system_parameters.excited
-        ),
+        ground_states_approx=generate_coupled_states_ground_X(system_parameters.X),
+        excited_states_approx=generate_coupled_states_excited_B(system_parameters.B),
         Jmin=Jmin,
         Jmax=Jmax,
         rtol=rtol,

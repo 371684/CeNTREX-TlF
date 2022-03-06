@@ -325,12 +325,12 @@ class LaserTransition:
 
     def get_string(self):
         string = (
-            f"{self.transition}({self.Jg}) F1'={Rational(self.F1)}, "
+            f"{self.transition}({self.Jg}) F1'={Rational(self.F1)} "
             f"F'={Rational(self.F)}"
         )
         return string
 
     def get_string_os(self):
         string = self.get_string()
-        string = string.replace("/", "_").replace(",", "")
+        string = string.replace("/", "_")
         return string
