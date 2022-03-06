@@ -17,8 +17,9 @@ from .generate_julia_code import *
 
 from . import utils_julia
 from .utils_julia import *
-from .utils_julia_progressbar import *
 from .utils_setup import *
+from .utils_julia_progressbar import *
+from .utils_decay import *
 
 __all__ = utils.__all__.copy()
 __all__ += generate_hamiltonian.__all__.copy()
