@@ -133,6 +133,32 @@ class CoupledBasisState:
             string = f"{string}, v = {v}"
         return "|" + string + ">"
 
+    def get_string(self, quantum_values):
+        F = sp.S(str(self.F), rational=True)
+        mF = sp.S(str(self.mF), rational=True)
+        F1 = sp.S(str(self.F1), rational=True)
+        J = sp.S(str(self.J), rational=True)
+        I1 = sp.S(str(self.I1), rational=True)
+        I2 = sp.S(str(self.I2), rational=True)
+        electronic_state = self.electronic_state
+        if self.P == 1:
+            P = "+"
+        elif self.P == -1:
+            P = "-"
+        else:
+            P = None
+        Omega = self.Omega
+        v = self.v
+
+        string = ""
+        for qv in quantum_values:
+            # TODO: find another way without eval!
+            if qv == "electronic_state":
+                string += f"{electronic_state}, "
+            else:
+                string += f"{qv} = {eval(qv)}, "
+        return f"|{string.strip(', ')}>"
+
     def print_quantum_numbers(self, printing=False):
         if printing:
             print(self.state_string())
