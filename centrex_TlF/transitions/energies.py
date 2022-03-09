@@ -1,5 +1,6 @@
 import json
 import pickle
+from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
@@ -14,8 +15,8 @@ from centrex_TlF.hamiltonian import (
     generate_uncoupled_hamiltonian_X_function,
     matrix_to_states,
 )
-from centrex_TlF.states.states import CoupledBasisState
 from centrex_TlF.states.generate_states import generate_coupled_states_excited_B
+from centrex_TlF.states.states import CoupledBasisState, State
 from centrex_TlF.states.utils import (
     BasisStates_from_State,
     QuantumSelector,
@@ -255,16 +256,26 @@ def find_transition(transition, F1, F, eg="X", ee="B", return_states=False):
 def identify_transition(state1, state2):
     assert state1 != state2, "no transition between same states"
     transitions = {0: "Q", +1: "R", -1: "P", +2: "S", -2: "O", +3: "T"}
-    state1 = state1.find_largest_component()
-    state2 = state2.find_largest_component()
+    if isinstance(state1, (State)):
+        state1 = state1.find_largest_component()
+    if isinstance(state2, (State)):
+        state2 = state2.find_largest_component()
     assert state1.electronic_state != "B", "state1 required to be a ground state"
     assert state2.electronic_state != "X", "state2 required to be an excited state"
     assert state1.isCoupled, "supply state1 in coupled basis"
     assert state2.isCoupled, "supply state2 in coupled basis"
     Jg, Je = state1.J, state2.J
-    transition = transitions[Je - Jg]
-    string = f"{transition}({Jg}) F1'={Rational(state2.F1)}, F'={Rational(state2.F)}"
-    return string
+    transition = transitions.get(Je - Jg)
+    if transition is None:
+        return None
+    transition = LaserTransition(
+        f"{transition}{Jg}",
+        state2.F1,
+        state2.F,
+        state1.electronic_state,
+        state2.electronic_state,
+    )
+    return transition
 
 
 class LaserTransition:
@@ -316,12 +327,18 @@ class LaserTransition:
 
         self.n_ground = len(self.ground_states)
         self.n_excited = len(self.excited_states)
-        self.frequency = generate_transition_frequency(
-            self.ground_main, self.excited_main
-        )
 
     def __repr__(self):
         return f"Transition({self.get_string()})"
+
+    def __eq__(self, other):
+        return (
+            (self.Je == other.Je) &
+            (self.Jg == other.Jg) &
+            (self.F1 == other.F1) &
+            (self.F == other.F) &
+            (self.ΔmF == other.ΔmF)
+        )
 
     def get_string(self):
         string = (
@@ -334,3 +351,6 @@ class LaserTransition:
         string = self.get_string()
         string = string.replace("/", "_")
         return string
+
+    def get_frequency(self):
+        return generate_transition_frequency(self.ground_main, self.excited_main)
