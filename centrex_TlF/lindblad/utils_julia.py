@@ -562,36 +562,16 @@ def setup_parameter_scan_ND(odePar, parameters, values, randomize=False):
         np.ndarray: return the indices that randomized the parameter
                     combinations, if randomize=True
     """
-    pars = str(odePar.p)[1:-1].split(",")
-
-    for idN, parameter in enumerate(parameters):
-        if isinstance(parameter, (list, tuple)):
-            indices = [odePar.get_index_parameter(par) for par in parameter]
-        else:
-            indices = [odePar.get_index_parameter(parameter)]
-        for idx in indices:
-            pars[idx] = f"params[i,{idN+1}]"
-    pars = "[" + ",".join(pars) + "]"
     # create all possible combinations between parameter values with
     # meshgrid
     params = np.array(np.meshgrid(*values)).T.reshape(-1, len(values))
-    Main.params = params
+
+    setup_parameter_scan_zipped(odePar, parameters, params.T)
+
     if randomize:
         # randomize value sequence if randomize=True
         ind_random = np.random.permutation(len(params))
         Main.params = params[ind_random]
-
-    # generate the prob_func that remakes the ODE problem for each
-    # new parameter value set
-    Main.eval(
-        f"""
-    @everywhere params = $params
-    @everywhere function prob_func(prob, i, repeat)
-        remake(prob, p = {pars})
-    end
-    """
-    )
-    if randomize:
         return ind_random
 
 
@@ -772,9 +752,9 @@ def setup_problem_parameter_scan(
     parameters: list,
     values: np.ndarray,
     dimensions: int = 1,
-    problem_name="prob",
+    problem_name: str = "prob",
     output_func=None,
-    zipped=False,
+    zipped: bool = False,
 ):
     setup_problem(odepars, tspan, ρ, problem_name)
     if dimensions == 1:
